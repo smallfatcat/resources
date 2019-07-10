@@ -38,6 +38,12 @@ RegisterCommand("tp", function(source)
     SetPedCoordsKeepVehicle(GetPlayerPed(-1), basex, basey, basez)
 end)
 
+RegisterCommand("tpp", function(source)
+    --RequestIpl("bkr_biker_interior_placement_interior_3_biker_dlc_int_ware02_milo")
+    local serverFarm =  vector3(895.5518,-3246.038, -98.04907)
+    SetPedCoordsKeepVehicle(GetPlayerPed(-1), serverFarm.x, serverFarm.y, serverFarm.z)
+end)
+
 RegisterCommand("boom", function(source)
     --ExplodeVehicle(vehicles[tonumber(args[1])],true,true)
     for i = 1, 5 do
