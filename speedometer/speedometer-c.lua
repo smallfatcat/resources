@@ -1,3 +1,5 @@
+-- Test lua script for FiveM
+
 RegisterCommand("fuel", function(source, args)
     if(IsPedInAnyVehicle(GetPlayerPed(-1), false)) then
         local vehicle = GetVehiclePedIsIn(GetPlayerPed(-1), false)
