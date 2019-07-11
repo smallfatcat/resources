@@ -31,11 +31,33 @@ RegisterCommand("testcars", function(source)
     --TriggerEvent("chatMessage", "[SPAWNED]", {0,255,0}, "cars")
 end)
 
-RegisterCommand("tp", function(source)
-    local basex = 1726.0500488281
-    local basey = 3239.4248046875
-    local basez = 41.545928955078
-    SetPedCoordsKeepVehicle(GetPlayerPed(-1), basex, basey, basez)
+RegisterCommand("tp", function(source, args)
+    local vTarget = vector3(1726.05,3239.42,41.54)
+    if args[1] ~= nil and args[2] ~= nil and args[3] ~= nil then
+        --print("vTarget.x = "..vTarget.x.."type: "..type(vTarget.x))
+        --print("vTarget.y = "..vTarget.y.."type: "..type(vTarget.y))
+        --print("vTarget.z = "..vTarget.z.."type: "..type(vTarget.z))
+        --print("args[1] = "..args[1].."type: "..type(tonumber(args[1])))
+        --print("args[2] = "..args[2].."type: "..type(tonumber(args[2])))
+        --print("args[3] = "..args[3].."type: "..type(tonumber(args[3])))
+        --vTarget.x = tonumber(args[1])
+        --vTarget.y = tonumber(args[2])
+        --vTarget.z = tonumber(args[3])
+        vTarget = vector3(tonumber(args[1]), tonumber(args[2]),tonumber(args[3]))
+    end
+    SetPedCoordsKeepVehicle(GetPlayerPed(-1), vTarget.x, vTarget.y, vTarget.z)
+end)
+
+RegisterCommand("tpbank1", function(source)
+    SetPedCoordsKeepVehicle(GetPlayerPed(-1), vBank1.x, vBank1.y, vBank1.z)
+end)
+
+RegisterCommand("tpbank2", function(source)
+    SetPedCoordsKeepVehicle(GetPlayerPed(-1), vBank2.x, vBank2.y, vBank2.z)
+end)
+
+RegisterCommand("tpbank3", function(source)
+    SetPedCoordsKeepVehicle(GetPlayerPed(-1), vBank3.x, vBank3.y, vBank3.z)
 end)
 
 RegisterCommand("tpp", function(source)
@@ -103,8 +125,52 @@ RegisterCommand("trackP", function(source)
     trackPed()
 end)
 
+RegisterCommand("openDoor", function(source, args)
+    openDoor(tonumber(args[1]))
+end)
+
+RegisterCommand("checkDoor", function(source, args)
+    checkDoor()
+end)
+
+RegisterCommand("lockDoor", function(source)
+    lockDoor()
+end)
+
+RegisterCommand("unlockDoor", function(source)
+    unlockDoor()
+end)
+
+
+
+
 -- Functions
 --------------------------------------------------------------------------
+function checkDoor()
+    doorID = closestObjectID()
+    Heading = GetEntityHeading(doorID)
+    print("Heading "..Heading)
+end
+
+function lockDoor()
+    doorID = closestObjectID()
+    NetworkRequestControlOfEntity(doorID)
+    FreezeEntityPosition(doorID, true)
+end
+
+function unlockDoor()
+    doorID = closestObjectID()
+    NetworkRequestControlOfEntity(doorID)
+    FreezeEntityPosition(doorID, false)
+end
+
+function openDoor(Heading)
+    doorID = closestObjectID()
+    SetEntityCanBeDamaged(doorID, false)
+    NetworkRequestControlOfEntity(doorID)
+    SetEntityHeading(doorID, tonumber(Heading))
+end
+
 function trackVehicle()
     AddBlipForEntity(closestVehicleID())
 end
@@ -256,6 +322,24 @@ function closestPedID()
     return closest
 end
 
+function closestObjectID()
+    local x, y, z = table.unpack(GetEntityCoords(GetPlayerPed(-1), false))
+    local nearest = 1000000
+    local closest = 0
+    for obj in EnumerateObjects() do
+        local isInVehicle = GetVehiclePedIsIn(obj, false) ~= 0
+        if obj ~= GetPlayerPed(-1) then
+            objcoords = GetEntityCoords(obj)
+            distance = GetDistanceBetweenCoords(x, y, z, objcoords.x, objcoords.y, objcoords.z, true)
+            if (distance < nearest) then
+                nearest = distance
+                closest = obj
+            end
+        end
+    end
+    return closest
+end
+
 -- Variables
 --------------------------------------------------------------------------
 
@@ -265,6 +349,9 @@ v2 = vector3(1726.0500488281, 3244.4248046875, 41.545928955078)
 v3 = vector3(1726.0500488281, 3249.4248046875, 41.545928955078)
 v4 = vector3(1726.0500488281, 3254.4248046875, 41.545928955078)
 v5 = vector3(1726.0500488281, 3259.4248046875, 41.545928955078)
+vBank1 = vector3(255.51, 226.60, 101.87)
+vBank2 = vector3(-2957.44, 480.30, 15.70)
+vBank3 = vector3(-104.17, 6470.57, 31.62)
 carNames = {"adder","cheetah","zentorno","bf400","comet3"}
 
 local blip1 = addBlip(v1, 225, "1")
@@ -328,9 +415,12 @@ Citizen.CreateThread(function()
                 Draw3DText(v5, "5")
                 Draw3DText(GetEntityCoords(closestVehicleID()), "Vehicle")
                 local closestPed = closestPedID()
+                local closestObject = closestObjectID()
+                local headingObject = GetEntityPhysicsHeading(closestObject)
                 --local pedGroup = GetPedGroupIndex(closestPed)
                 --local groupHash = GetPedRelationshipGroupHash(closestPed)
                 Draw3DText(GetEntityCoords(closestPed), "Ped")
+                Draw3DText(GetEntityCoords(closestObject), "Object "..closestObject.." "..headingObject)
             --end
     end
 end)
