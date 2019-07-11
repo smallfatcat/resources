@@ -1,5 +1,43 @@
 -- Test lua script for FiveM
 
+RegisterNetEvent('BankDoor:OpenClient')
+AddEventHandler('BankDoor:OpenClient', function(doorID)
+    print("Door opened: "..doorID)
+    --print("Debug2:"..bankDoors[2].open)
+    changeDoorHeading(doorID, bankDoors[tonumber(doorID)].open)
+end)
+
+RegisterNetEvent('BankDoor:CloseClient')
+AddEventHandler('BankDoor:CloseClient', function(doorID)
+    print("Door closed: "..doorID)
+    changeDoorHeading(doorID, bankDoors[tonumber(doorID)].closed)
+end)
+
+function changeDoorHeading(doorID, heading)
+    bankDoorID = closestObjectIDtoCoords(bankDoors[tonumber(doorID)].pos)
+    SetEntityCanBeDamaged(bankDoorID, false)
+    NetworkRequestControlOfEntity(bankDoorID)
+    SetEntityHeading(bankDoorID, tonumber(heading))
+end
+
+RegisterCommand("bo", function(source, args)
+    local doorID = args[1]
+    --local doorID = closestObjectIDtoCoords(bankDoors[doorID].pos)
+    TriggerServerEvent("BankDoor:OpenServer", doorID)
+end)
+
+RegisterCommand("bc", function(source, args)
+    local doorID = args[1]
+    --local doorID = closestObjectIDtoCoords(bankDoors[i].pos)
+    TriggerServerEvent("BankDoor:CloseServer", doorID)
+end)
+
+RegisterCommand("posObject", function(source)
+    local objectID = closestObjectID()
+    local coords = GetEntityCoords(objectID, false)
+    print("ObjectCoords: "..coords.x..", "..coords.y..", "..coords.z)
+end)
+
 RegisterCommand("fuel", function(source, args)
     if(IsPedInAnyVehicle(GetPlayerPed(-1), false)) then
         local vehicle = GetVehiclePedIsIn(GetPlayerPed(-1), false)
@@ -48,16 +86,8 @@ RegisterCommand("tp", function(source, args)
     SetPedCoordsKeepVehicle(GetPlayerPed(-1), vTarget.x, vTarget.y, vTarget.z)
 end)
 
-RegisterCommand("tpbank1", function(source)
-    SetPedCoordsKeepVehicle(GetPlayerPed(-1), vBank1.x, vBank1.y, vBank1.z)
-end)
-
-RegisterCommand("tpbank2", function(source)
-    SetPedCoordsKeepVehicle(GetPlayerPed(-1), vBank2.x, vBank2.y, vBank2.z)
-end)
-
-RegisterCommand("tpbank3", function(source)
-    SetPedCoordsKeepVehicle(GetPlayerPed(-1), vBank3.x, vBank3.y, vBank3.z)
+RegisterCommand("tpb", function(source, args)
+    SetPedCoordsKeepVehicle(GetPlayerPed(-1), banks[tonumber(args[1])].x, banks[tonumber(args[1])].y, banks[tonumber(args[1])].z)
 end)
 
 RegisterCommand("tpp", function(source)
@@ -324,6 +354,14 @@ end
 
 function closestObjectID()
     local x, y, z = table.unpack(GetEntityCoords(GetPlayerPed(-1), false))
+    local coords = vector3(x, y, z)
+    return closestObjectIDtoCoords(coords)
+end
+
+function closestObjectIDtoCoords(coords)
+    local x = coords.x
+    local y = coords.y
+    local z = coords.z
     local nearest = 1000000
     local closest = 0
     for obj in EnumerateObjects() do
@@ -340,6 +378,7 @@ function closestObjectID()
     return closest
 end
 
+
 -- Variables
 --------------------------------------------------------------------------
 
@@ -353,6 +392,17 @@ local unusedBool, v1ground = GetGroundZFor_3dCoord(v1.x, v1.y, v1.z, 0)
 vBank1 = vector3(255.51, 226.60, 101.87)
 vBank2 = vector3(-2957.44, 480.30, 15.70)
 vBank3 = vector3(-104.17, 6470.57, 31.62)
+vBank4 = vector3(1179.65, 2705.01, 38.08)
+
+banks = {vBank1,vBank2,vBank3,vBank4}
+--vBank1Door1 = vector3(255.228,223.976,102.393)
+local bankDoor1 = {pos = vector3(255.228,223.976,102.393), closed =  160.0, open = 10.0}
+local bankDoor2 = {pos = vector3(-2958.538,482.270,15.835), closed =  357.542, open = 270.0}
+local bankDoor3 = {pos = vector3(-104.604,6473.443,31.795), closed =  45.0, open = 150.0}
+local bankDoor4 = {pos = vector3(1175.542,2710.861,38.226), closed =  90.0, open = 0.0}
+
+bankDoors = {bankDoor1, bankDoor2, bankDoor3, bankDoor4}
+--print("Debug:"..bankDoors[2].open)
 carNames = {"adder","cheetah","zentorno","bf400","comet3"}
 
 local blip1 = addBlip(v1, 225, "1")
@@ -383,7 +433,7 @@ Citizen.CreateThread(function()
             local maxV = GetVehicleHandlingInt(vehicle, 'CHandlingData', 'fInitialDriveMaxFlatVel')
             local driveF = GetVehicleHandlingInt(vehicle, 'CHandlingData', 'fEngineDamageMult')
             local health = GetVehicleEngineHealth(vehicle)
-            --SetVehicleEnginePowerMultiplier(vehicle , 50.0)
+            SetVehicleEnginePowerMultiplier(vehicle , 10.0)
                     
             --text(math.floor(speed) .. " MPH ")
             text(
