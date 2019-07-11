@@ -87,8 +87,70 @@ RegisterCommand("closest", function(source)
     print(closestVehicleID())
 end)
 
+RegisterCommand("lineSpawner", function(source)
+    lineSpawner()
+end)
+
+RegisterCommand("kidnap", function(source)
+    kidnapPed()
+end)
+
+RegisterCommand("trackV", function(source)
+    trackVehicle()
+end)
+
+RegisterCommand("trackP", function(source)
+    trackPed()
+end)
+
 -- Functions
 --------------------------------------------------------------------------
+function trackVehicle()
+    AddBlipForEntity(closestVehicleID())
+end
+
+function trackPed()
+    SetEntityAsMissionEntity(ped, true, false)
+    AddBlipForEntity(closestPedID())
+end
+
+function kidnapPed()
+    local ped = closestPedID()
+    SetEntityAsMissionEntity(ped, true, false)
+    ClearPedTasksImmediately(ped)
+    SetBlockingOfNonTemporaryEvents(ped, true)
+    local vehicle = closestVehicleID()
+    local timeout = 15000
+    local seat = 0
+    local speed = 1.0
+    local flag = 1
+    local p6 = 0
+    TaskEnterVehicle(ped, vehicle, timeout, seat, speed, flag, p6)
+end
+
+function lineSpawner()
+    local vStart = vector3(1719.97, 3239.41, 41.15)
+    local vEnd = vector3(1712.10, 3267.57, 41.15)
+    local num = 5
+
+    local vLine = vector3(vEnd.x-vStart.x, vEnd.y-vStart.y, vEnd.z-vStart.z)
+    for i = 1, num do
+        local grid = (i-1)/(num-1)
+        local x = vStart.x + (vLine.x * grid)
+        local y = vStart.y + (vLine.y * grid)
+        local z = vStart.z + (vLine.z * grid)
+
+        local car = GetHashKey(carNames[i])
+        RequestModel(car)
+        while not HasModelLoaded(car) do
+            RequestModel(car)
+            Citizen.Wait(0)
+        end
+        vehicles[i] = CreateVehicle(car, x, y, z, 107.0, true, false)
+        SetEntityAsMissionEntity(vehicles[i], true, true)
+        TriggerEvent("chatMessage", "[SPAWNED]", {0,255,0}, GetVehicleNumberPlateText(vehicles[i]).." "..car.." V: "..vehicles[i])
+    end
+end
 
 function addBlip(v, sprite, label)
     local blip = AddBlipForCoord(v.x, v.y)
@@ -130,12 +192,16 @@ function spawnCar(car)
 end
 
 function text(content) 
-    SetTextFont(2)
+    SetTextFont(4)
     SetTextProportional(0)
-    SetTextScale(1.0,1.0)
+    SetTextScale(0.5,0.5)
+    SetTextDropshadow(0, 0, 0, 0, 255)
+    SetTextEdge(2, 0, 0, 0, 150)
+    SetTextDropShadow()
+    SetTextOutline()
     SetTextEntry("STRING")
     AddTextComponentString(content)
-    DrawText(0.02,0.7)
+    DrawText(0.01,0.75)
 end
 
 function Draw3DText(v, text)
@@ -206,6 +272,7 @@ local blip2 = addBlip(v2, 225, "2")
 local blip3 = addBlip(v3, 225, "3")
 local blip4 = addBlip(v4, 225, "4")
 local blip5 = addBlip(v5, 225, "5")
+local blip6 = addBlip(v5, 225, "5")
 local blipsVisible = true
 
 -- Threads
@@ -225,11 +292,25 @@ Citizen.CreateThread(function()
             local clutch  = GetVehicleClutch(vehicle)
             local rpm  = GetVehicleCurrentRpm(vehicle)
             --local accel = GetVehicleCurrentAcceleration(vehicle)
-            local fInitialDriveMaxFlatVel = GetVehicleHandlingInt(vehicle, 'CHandlingData', 'fInitialDriveMaxFlatVel')
-            
+            local maxV = GetVehicleHandlingInt(vehicle, 'CHandlingData', 'fInitialDriveMaxFlatVel')
+            local driveF = GetVehicleHandlingInt(vehicle, 'CHandlingData', 'fEngineDamageMult')
+            local health = GetVehicleEngineHealth(vehicle)
+            --SetVehicleEnginePowerMultiplier(vehicle , 50.0)
                     
             --text(math.floor(speed) .. " MPH ")
-            text(math.floor(speed) .. " MPH Gear " .. math.floor(gear) .. " Fuel " .. math.floor(fuel) .. " rpm " .. math.floor(rpm*8000) .. " MaxV " .. fInitialDriveMaxFlatVel)
+            text(
+                math.floor(speed) 
+                .. " MPH - Gear " 
+                .. math.floor(gear) 
+                .. " - Fuel " 
+                .. math.floor(fuel) 
+                .. " - rpm " 
+                .. math.floor(rpm*8000) 
+                .. " - MaxV " 
+                .. maxV
+                .. " - health " 
+                .. health
+            )
         end
     end
 end)
@@ -246,7 +327,10 @@ Citizen.CreateThread(function()
                 Draw3DText(v4, "4")
                 Draw3DText(v5, "5")
                 Draw3DText(GetEntityCoords(closestVehicleID()), "Vehicle")
-                Draw3DText(GetEntityCoords(closestPedID()), "Ped")
+                local closestPed = closestPedID()
+                --local pedGroup = GetPedGroupIndex(closestPed)
+                --local groupHash = GetPedRelationshipGroupHash(closestPed)
+                Draw3DText(GetEntityCoords(closestPed), "Ped")
             --end
     end
 end)
