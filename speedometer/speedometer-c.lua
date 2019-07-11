@@ -349,6 +349,7 @@ v2 = vector3(1726.0500488281, 3244.4248046875, 41.545928955078)
 v3 = vector3(1726.0500488281, 3249.4248046875, 41.545928955078)
 v4 = vector3(1726.0500488281, 3254.4248046875, 41.545928955078)
 v5 = vector3(1726.0500488281, 3259.4248046875, 41.545928955078)
+local unusedBool, v1ground = GetGroundZFor_3dCoord(v1.x, v1.y, v1.z, 0)
 vBank1 = vector3(255.51, 226.60, 101.87)
 vBank2 = vector3(-2957.44, 480.30, 15.70)
 vBank3 = vector3(-104.17, 6470.57, 31.62)
@@ -422,6 +423,38 @@ Citizen.CreateThread(function()
                 Draw3DText(GetEntityCoords(closestPed), "Ped")
                 Draw3DText(GetEntityCoords(closestObject), "Object "..closestObject.." "..headingObject)
             --end
+    end
+end)
+
+CreateThread(function()
+    while true do
+        -- draw every frame
+        Wait(0)
+        DrawMarker(
+            23,         -- type
+            v1.x,       -- posX
+            v1.y,       -- posY
+            v1ground + 0.1, -- posZ
+            0.0,        -- dirX
+            0.0,        -- dirY
+            0.0,        -- dirZ
+            0.0,        -- rotX
+            180.0,      -- rotY
+            0.0,        -- rotZ
+            1.0,        -- scaleX
+            1.0,        -- scaleY
+            1.0,        -- scaleZ
+            255,        -- red
+            0,        -- green
+            0,          -- blue
+            200,         -- alpha
+            false,      -- bobUpAndDown
+            true,       -- faceCamera
+            2,          -- p19
+            nil,        -- rotate
+            nil,        
+            false
+        )
     end
 end)
 
