@@ -1,6 +1,69 @@
 -- Test lua script for FiveM
+_menuPool = NativeUI.CreatePool()
+mainMenu = NativeUI.CreateMenu("Actions", "~b~Action Menu")
 
-DEBUG_DISPLAY = false
+_menuPool:Add(mainMenu)
+
+function itemMenu(menu)
+    local b = {1,2,3,4}
+    local emoteList = {}
+    for i = 1, #Config.Anims do
+        emoteList[i] = Config.Anims[i].name
+    end
+    local click  = NativeUI.CreateItem("Start Fight Club", "~g~make peds fight")
+    local tplist = NativeUI.CreateListItem("Teleport to Bank", b, 1)
+    local openlist = NativeUI.CreateListItem("Open Bank Door", b, 1)
+    local closelist = NativeUI.CreateListItem("Close Bank Door", b, 1)
+    local emotes = NativeUI.CreateListItem("Emote", emoteList, 1)
+    
+    menu:AddItem(click)
+    menu:AddItem(tplist)
+    menu:AddItem(openlist)
+    menu:AddItem(closelist)
+    menu:AddItem(emotes)
+    --menu.MouseControlsEnabled = false
+    menu.OnItemSelect = function(sender, item, index)
+        -- print("debug: in 1:")
+        if item == click then
+            fightclub()
+            notify("~g~Fight Club started")
+        end
+    end
+    menu.OnListSelect = function(sender, item, index)  
+        if item == tplist then
+            local selectedBank = item:IndexToItem(index)
+            tpBank(tonumber(selectedBank))
+            notify("~g~Teleported to bank "..tonumber(selectedBank))
+        end
+        if item == openlist then
+            local selectedBank = item:IndexToItem(index)
+            openBankDoor(tonumber(selectedBank))
+            notify("~g~Opened Bank Door "..tonumber(selectedBank))
+        end
+        if item == closelist then
+            local selectedBank = item:IndexToItem(index)
+            closeBankDoor(tonumber(selectedBank))
+            notify("~g~Closed Bank Door "..tonumber(selectedBank))
+        end
+        if item == emotes then
+            local emoteName = item:IndexToItem(index)
+            ExecuteCommand("e "..emoteName)
+            notify("~g~Emoted "..emoteName)
+        end
+    end
+end
+
+itemMenu(mainMenu)
+_menuPool:RefreshIndex()
+mainMenu.Settings.MouseControlsEnabled = false
+mainMenu.Settings.MouseEdgeEnabled = false
+mainMenu.Settings.ControlDisablingEnabled = false
+
+print("debugnow: "..tostring(mainMenu.MouseControlsEnabled))
+
+
+
+DEBUG_DISPLAY = true
 
 RegisterNetEvent('BankDoor:OpenClient')
 AddEventHandler('BankDoor:OpenClient', function(doorID)
@@ -50,14 +113,22 @@ end)
 RegisterCommand("bo", function(source, args)
     local doorID = args[1]
     --local doorID = closestObjectIDtoCoords(bankDoors[doorID].pos)
-    TriggerServerEvent("BankDoor:OpenServer", doorID)
+    openBankDoor(doorID)
 end)
+
+function openBankDoor(doorID)
+    TriggerServerEvent("BankDoor:OpenServer", doorID)
+end
 
 RegisterCommand("bc", function(source, args)
     local doorID = args[1]
     --local doorID = closestObjectIDtoCoords(bankDoors[i].pos)
-    TriggerServerEvent("BankDoor:CloseServer", doorID)
+    closeBankDoor(doorID)
 end)
+
+function closeBankDoor(doorID)
+    TriggerServerEvent("BankDoor:CloseServer", doorID)
+end
 
 RegisterCommand("posObject", function(source)
     local objectID = closestObjectID()
@@ -114,8 +185,12 @@ RegisterCommand("tp", function(source, args)
 end)
 
 RegisterCommand("tpb", function(source, args)
-    SetPedCoordsKeepVehicle(GetPlayerPed(-1), banks[tonumber(args[1])].x, banks[tonumber(args[1])].y, banks[tonumber(args[1])].z)
+    tpBank(tonumber(args[1]))
 end)
+
+function tpBank(bankID)
+    SetPedCoordsKeepVehicle(GetPlayerPed(-1), banks[bankID].x, banks[bankID].y, banks[bankID].z)
+end
 
 RegisterCommand("tpp", function(source)
     --RequestIpl("bkr_biker_interior_placement_interior_3_biker_dlc_int_ware02_milo")
@@ -207,6 +282,13 @@ end)
 
 -- Functions
 --------------------------------------------------------------------------
+
+function notify(msg)
+    SetNotificationTextEntry("STRING")
+    AddTextComponentString(msg)
+    DrawNotification(true,false)
+end
+
 function checkDoor()
     doorID = closestObjectID()
     Heading = GetEntityHeading(doorID)
@@ -271,9 +353,11 @@ end
 function lineSpawner()
     local vStart = vector3(1719.97, 3239.41, 41.15)
     local vEnd = vector3(1712.10, 3267.57, 41.15)
-    local num = 5
+    local num = 10
 
     local vLine = vector3(vEnd.x-vStart.x, vEnd.y-vStart.y, vEnd.z-vStart.z)
+    local carHeading  = GetHeadingFromVector_2d(vLine.x, vLine.y) + 90.0
+
     for i = 1, num do
         local grid = (i-1)/(num-1)
         local x = vStart.x + (vLine.x * grid)
@@ -286,7 +370,7 @@ function lineSpawner()
             RequestModel(car)
             Citizen.Wait(0)
         end
-        vehicles[i] = CreateVehicle(car, x, y, z, 107.0, true, false)
+        vehicles[i] = CreateVehicle(car, x, y, z, carHeading, true, false)
         SetEntityAsMissionEntity(vehicles[i], true, true)
         TriggerEvent("chatMessage", "[SPAWNED]", {0,255,0}, GetVehicleNumberPlateText(vehicles[i]).." "..car.." V: "..vehicles[i])
     end
@@ -494,7 +578,7 @@ local controlPanel2 = vector3(-2956.500, 482.063, 15.897)
 local controlPanel3 = vector3(-104.604, 6473.443, 31.795)
 local controlPanel4 = vector3(1175.542, 2710.861, 38.226)
 --print("Debug:"..bankDoors[2].open)
-carNames = {"adder","cheetah","zentorno","bf400","comet3"}
+carNames = {"jester2","cheetah","zentorno","infernus","comet3", "carbonizzare", "autarch", "bullet", "scramjet", "t20"}
 
 local blip1 = addBlip(v1, 225, "1")
 local blip2 = addBlip(v2, 225, "2")
@@ -506,6 +590,20 @@ local blipsVisible = true
 
 -- Threads
 ---------------------------------------------------------------------------
+
+Citizen.CreateThread(function()
+    print("debug: menu")
+    while true do
+        Citizen.Wait(1)
+        _menuPool:ProcessMenus()
+        --[[ The "z" button will activate the menu ]]
+        if IsControlJustReleased(1, 48) then
+            print("debug: "..tostring(mainMenu.MouseControlsEnabled))
+            mainMenu:Visible(not mainMenu:Visible())
+            --print("debug: menu")
+        end
+    end
+end)
 
 Citizen.CreateThread(function()
 
@@ -606,7 +704,7 @@ CreateThread(function()
     end
 end)
 
-DensityMultiplier = 0.50
+DensityMultiplier = 1.0
 Citizen.CreateThread(function()
     while true do
         Citizen.Wait(0)
