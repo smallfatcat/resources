@@ -1,5 +1,7 @@
 -- Test lua script for FiveM
 
+DEBUG_DISPLAY = false
+
 RegisterNetEvent('BankDoor:OpenClient')
 AddEventHandler('BankDoor:OpenClient', function(doorID)
     print("Door opened: "..doorID)
@@ -19,6 +21,31 @@ function changeDoorHeading(doorID, heading)
     NetworkRequestControlOfEntity(bankDoorID)
     SetEntityHeading(bankDoorID, tonumber(heading))
 end
+
+RegisterCommand("debugDisplay", function(source, args)
+    --print("Debug"..args[1])
+    if args[1] ~= nil then
+        if tonumber(args[1]) == 1 then
+            DEBUG_DISPLAY = true
+        else
+            DEBUG_DISPLAY = false
+        end
+    else
+        if DEBUG_DISPLAY then
+            DEBUG_DISPLAY = false
+        else
+            DEBUG_DISPLAY = true
+        end
+    end
+    print("Debug: "..tostring(DEBUG_DISPLAY))
+end)
+
+RegisterCommand("debugTest", function(source, args)
+    local npeds = closestNPedIDs(5)
+    for ped in npeds do
+        print(ped)
+    end
+end)
 
 RegisterCommand("bo", function(source, args)
     local doorID = args[1]
@@ -352,6 +379,27 @@ function closestPedID()
     return closest
 end
 
+function closestNPedIDs(N)
+    local x, y, z = table.unpack(GetEntityCoords(GetPlayerPed(-1), false))
+    local nearest = 1000000
+    local distances = {}
+    for ped in EnumeratePeds() do
+        local isInVehicle = GetVehiclePedIsIn(ped, false) ~= 0
+        if ped ~= GetPlayerPed(-1) and not isInVehicle then
+            local distance = {}
+            pedcoords = GetEntityCoords(ped)
+            distance[ped] = GetDistanceBetweenCoords(x, y, z, pedcoords.x, pedcoords.y, pedcoords.z, true)
+            table.insert(distances, distance)
+        end
+    end
+    table.sort(distances)
+    local nearestNPeds = {}
+    for ped, dist in ipairs(distances) do
+        table.insert(nearestNPeds, ped)
+    end
+    return nearestNPeds
+end
+
 function closestObjectID()
     local x, y, z = table.unpack(GetEntityCoords(GetPlayerPed(-1), false))
     local coords = vector3(x, y, z)
@@ -389,19 +437,23 @@ v3 = vector3(1726.0500488281, 3249.4248046875, 41.545928955078)
 v4 = vector3(1726.0500488281, 3254.4248046875, 41.545928955078)
 v5 = vector3(1726.0500488281, 3259.4248046875, 41.545928955078)
 local unusedBool, v1ground = GetGroundZFor_3dCoord(v1.x, v1.y, v1.z, 0)
-vBank1 = vector3(255.51, 226.60, 101.87)
-vBank2 = vector3(-2957.44, 480.30, 15.70)
-vBank3 = vector3(-104.17, 6470.57, 31.62)
-vBank4 = vector3(1179.65, 2705.01, 38.08)
+local vBank1 = vector3(255.51, 226.60, 101.87)
+local vBank2 = vector3(-2957.44, 480.30, 15.70)
+local vBank3 = vector3(-104.17, 6470.57, 31.62)
+local vBank4 = vector3(1179.65, 2705.01, 38.08)
 
 banks = {vBank1,vBank2,vBank3,vBank4}
 --vBank1Door1 = vector3(255.228,223.976,102.393)
-local bankDoor1 = {pos = vector3(255.228,223.976,102.393), closed =  160.0, open = 10.0}
-local bankDoor2 = {pos = vector3(-2958.538,482.270,15.835), closed =  357.542, open = 270.0}
-local bankDoor3 = {pos = vector3(-104.604,6473.443,31.795), closed =  45.0, open = 150.0}
-local bankDoor4 = {pos = vector3(1175.542,2710.861,38.226), closed =  90.0, open = 0.0}
+local bankDoor1 = {pos = vector3(255.228, 223.976, 102.393), closed =  160.0, open = 10.0}
+local bankDoor2 = {pos = vector3(-2958.538, 482.270, 15.835), closed =  357.542, open = 270.0}
+local bankDoor3 = {pos = vector3(-104.604, 6473.443, 31.795), closed =  45.0, open = 150.0}
+local bankDoor4 = {pos = vector3(1175.542, 2710.861, 38.226), closed =  90.0, open = 0.0}
 
 bankDoors = {bankDoor1, bankDoor2, bankDoor3, bankDoor4}
+local controlPanel1 = vector3(252.916, 228.527, 102.088)
+local controlPanel2 = vector3(-2956.500, 482.063, 15.897)
+local controlPanel3 = vector3(-104.604, 6473.443, 31.795)
+local controlPanel4 = vector3(1175.542, 2710.861, 38.226)
 --print("Debug:"..bankDoors[2].open)
 carNames = {"adder","cheetah","zentorno","bf400","comet3"}
 
@@ -459,20 +511,24 @@ Citizen.CreateThread(function()
             -- the "Vdist2" native checks how far two vectors are from another. 
             -- https://runtime.fivem.net/doc/natives/#_0xB7A628320EFF8E47
             --if Vdist2(GetEntityCoords(PlayerPedId(), false), v1) < distance_until_text_disappears then
-                Draw3DText(v1, "1")
-                Draw3DText(v2, "2")
-                Draw3DText(v3, "3")
-                Draw3DText(v4, "4")
-                Draw3DText(v5, "5")
+            if DEBUG_DISPLAY then
+                for i = 1, 4 do
+                    local x, y, z = table.unpack(GetEntityCoords(GetPlayerPed(-1), false))
+                    local dist = math.ceil(GetDistanceBetweenCoords(banks[i].x, banks[i].y, banks[i].z, x, y, z, true))
+                    Draw3DText(banks[i], i.." "..dist.."m")
+                end
+
                 Draw3DText(GetEntityCoords(closestVehicleID()), "Vehicle")
+                
                 local closestPed = closestPedID()
                 local closestObject = closestObjectID()
                 local headingObject = GetEntityPhysicsHeading(closestObject)
                 --local pedGroup = GetPedGroupIndex(closestPed)
                 --local groupHash = GetPedRelationshipGroupHash(closestPed)
                 Draw3DText(GetEntityCoords(closestPed), "Ped")
+
                 Draw3DText(GetEntityCoords(closestObject), "Object "..closestObject.." "..headingObject)
-            --end
+            end
     end
 end)
 
@@ -505,6 +561,18 @@ CreateThread(function()
             nil,        
             false
         )
+    end
+end)
+
+DensityMultiplier = 0.50
+Citizen.CreateThread(function()
+    while true do
+        Citizen.Wait(0)
+        SetVehicleDensityMultiplierThisFrame(DensityMultiplier)
+        SetPedDensityMultiplierThisFrame(DensityMultiplier)
+        SetRandomVehicleDensityMultiplierThisFrame(DensityMultiplier)
+        SetParkedVehicleDensityMultiplierThisFrame(DensityMultiplier)
+        SetScenarioPedDensityMultiplierThisFrame(DensityMultiplier, DensityMultiplier)
     end
 end)
 
