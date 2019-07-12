@@ -10,23 +10,44 @@ function itemMenu(menu)
     for i = 1, #Config.Anims do
         emoteList[i] = Config.Anims[i].name
     end
+    local startT  = NativeUI.CreateItem("Start Timer", "~g~start stopwatch")
+    local stopT  = NativeUI.CreateItem("Stop timer", "~g~stop stopwatch")
+    local hideT  = NativeUI.CreateItem("Hide timer", "~g~hide stopwatch")
+    local startST  = NativeUI.CreateItem("Start Speed Timer", "~g~start stopwatch")
     local click  = NativeUI.CreateItem("Start Fight Club", "~g~make peds fight")
     local tplist = NativeUI.CreateListItem("Teleport to Bank", b, 1)
     local openlist = NativeUI.CreateListItem("Open Bank Door", b, 1)
     local closelist = NativeUI.CreateListItem("Close Bank Door", b, 1)
     local emotes = NativeUI.CreateListItem("Emote", emoteList, 1)
     
+    menu:AddItem(startT)
+    menu:AddItem(stopT)
+    menu:AddItem(hideT)
+    menu:AddItem(startST)
     menu:AddItem(click)
     menu:AddItem(tplist)
     menu:AddItem(openlist)
     menu:AddItem(closelist)
     menu:AddItem(emotes)
+
     --menu.MouseControlsEnabled = false
     menu.OnItemSelect = function(sender, item, index)
         -- print("debug: in 1:")
         if item == click then
             fightclub()
             notify("~g~Fight Club started")
+        end
+        if item == startT then
+            startTimer()
+        end
+        if item == stopT then
+            stopTimer()
+        end
+        if item == hideT then
+            timerVisible = false
+        end
+        if item == startST then
+            startSpeedTimer()
         end
     end
     menu.OnListSelect = function(sender, item, index)  
@@ -428,6 +449,19 @@ function text(content)
     DrawText(0.01,0.75)
 end
 
+function bottomText(content) 
+    SetTextFont(4)
+    SetTextProportional(0)
+    SetTextScale(0.5,0.5)
+    SetTextDropshadow(0, 0, 0, 0, 255)
+    SetTextEdge(2, 0, 0, 0, 150)
+    SetTextDropShadow()
+    SetTextOutline()
+    SetTextEntry("STRING")
+    AddTextComponentString(content)
+    DrawText(0.5,0.90)
+end
+
 function Draw3DText(v, text)
     SetDrawOrigin(v.x, v.y, v.z, 0)
     SetTextScale(0.0, 0.35)
@@ -549,9 +583,66 @@ function closestObjectIDtoCoords(coords)
     return closest
 end
 
+function startTimer()
+    timerStart = GetGameTimer()
+    timerRunning = true
+    timerVisible = true
+end
+
+function stopTimer()
+    timerEnd = timer
+    timerRunning = false
+    timerVisible = true
+end
+
+function startSpeedTimer()
+    speedTimerRunning = true
+    timerWaitingToStart = true
+    --startTimer()
+end
+
+function stopSpeedTimer()
+    speedTimerRunning = false
+    stopTimer()
+end
+
+Citizen.CreateThread(function()
+    while true do
+        Citizen.Wait(1)
+        if timerRunning then
+            timer = GetGameTimer() - timerStart
+        end
+        if timerVisible then
+            bottomText("Timer: "..tostring(timer/1000))
+        end
+        if speedTimerRunning then
+            if(IsPedInAnyVehicle(GetPlayerPed(-1), false)) then
+                local vehicle = GetVehiclePedIsIn(GetPlayerPed(-1), false)
+                local speed = tonumber(GetEntitySpeed(vehicle)*2.2369)
+                if (speed >= limitBottom) and (timerWaitingToStart) then
+                    timerWaitingToStart = false
+                    startTimer()
+                end
+                if (speed >= limitTop) and (speedTimerRunning) then
+                    stopSpeedTimer()
+                end
+            end
+        end
+    end
+end)
 
 -- Variables
 --------------------------------------------------------------------------
+limitBottom = 1.0
+limitTop = 100.0
+timerWaitingToEnd   = false
+timerWaitingToStart = false
+timerVisible = false
+timerRunning = false
+speedTimerRunning = false
+timerStart   = 0
+timerEnd     = 0
+timer        = 0
 
 vehicles = {0,0,0,0,0}
 v1 = vector3(1726.0500488281, 3239.4248046875, 41.545928955078)
