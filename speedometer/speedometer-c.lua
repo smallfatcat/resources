@@ -174,6 +174,10 @@ RegisterCommand("kidnap", function(source)
     kidnapPed()
 end)
 
+RegisterCommand("fightclub", function(source)
+    fightclub()
+end)
+
 RegisterCommand("trackV", function(source)
     trackVehicle()
 end)
@@ -249,6 +253,19 @@ function kidnapPed()
     local flag = 1
     local p6 = 0
     TaskEnterVehicle(ped, vehicle, timeout, seat, speed, flag, p6)
+end
+
+function fightclub()
+    local ped = closestPedID()
+    local targetped = closestPedIDignore(ped)
+    SetEntityAsMissionEntity(ped, true, false)
+    ClearPedTasksImmediately(ped)
+    --SetBlockingOfNonTemporaryEvents(ped, true)
+    SetEntityAsMissionEntity(targetped, true, false)
+    ClearPedTasksImmediately(targetped)
+    --SetBlockingOfNonTemporaryEvents(targetped, true)
+    TaskCombatPed(ped, targetped, 0, 16)
+    TaskCombatPed(targetped, ped, 0, 16)
 end
 
 function lineSpawner()
@@ -350,7 +367,7 @@ function closestVehicleID()
     local closest = 0
     for veh in EnumerateVehicles() do
         vehcoords = GetEntityCoords(veh)
-        distance = GetDistanceBetweenCoords(x, y, z, vehcoords.x, vehcoords.y, vehcoords.z, true)
+        distance = Vdist2(x, y, z, vehcoords.x, vehcoords.y, vehcoords.z, true)
         if (distance < nearest) then
             nearest = distance
             closest = veh
@@ -366,13 +383,35 @@ function closestPedID()
     local nearest = 1000000
     local closest = 0
     for ped in EnumeratePeds() do
-        local isInVehicle = GetVehiclePedIsIn(ped, false) ~= 0
-        if ped ~= GetPlayerPed(-1) and not isInVehicle then
-            pedcoords = GetEntityCoords(ped)
-            distance = GetDistanceBetweenCoords(x, y, z, pedcoords.x, pedcoords.y, pedcoords.z, true)
-            if (distance < nearest) then
-                nearest = distance
-                closest = ped
+        if IsPedHuman(ped) then
+            local isInVehicle = GetVehiclePedIsIn(ped, false) ~= 0
+            if ped ~= GetPlayerPed(-1) and not isInVehicle then
+                pedcoords = GetEntityCoords(ped)
+                distance = Vdist2(x, y, z, pedcoords.x, pedcoords.y, pedcoords.z)
+                if (distance < nearest) then
+                    nearest = distance
+                    closest = ped
+                end
+            end
+        end
+    end
+    return closest
+end
+
+function closestPedIDignore(ignore)
+    local x, y, z = table.unpack(GetEntityCoords(GetPlayerPed(-1), false))
+    local nearest = 1000000
+    local closest = 0
+    for ped in EnumeratePeds() do
+        if IsPedHuman(ped) and (ignore ~= ped) then
+            local isInVehicle = GetVehiclePedIsIn(ped, false) ~= 0
+            if ped ~= GetPlayerPed(-1) and not isInVehicle then
+                pedcoords = GetEntityCoords(ped)
+                distance = Vdist2(x, y, z, pedcoords.x, pedcoords.y, pedcoords.z)
+                if (distance < nearest) then
+                    nearest = distance
+                    closest = ped
+                end
             end
         end
     end
@@ -388,7 +427,7 @@ function closestNPedIDs(N)
         if ped ~= GetPlayerPed(-1) and not isInVehicle then
             local distance = {}
             pedcoords = GetEntityCoords(ped)
-            distance[ped] = GetDistanceBetweenCoords(x, y, z, pedcoords.x, pedcoords.y, pedcoords.z, true)
+            distance[ped] = Vdist2(x, y, z, pedcoords.x, pedcoords.y, pedcoords.z)
             table.insert(distances, distance)
         end
     end
@@ -416,7 +455,7 @@ function closestObjectIDtoCoords(coords)
         local isInVehicle = GetVehiclePedIsIn(obj, false) ~= 0
         if obj ~= GetPlayerPed(-1) then
             objcoords = GetEntityCoords(obj)
-            distance = GetDistanceBetweenCoords(x, y, z, objcoords.x, objcoords.y, objcoords.z, true)
+            distance = Vdist2(x, y, z, objcoords.x, objcoords.y, objcoords.z, true)
             if (distance < nearest) then
                 nearest = distance
                 closest = obj
@@ -521,11 +560,14 @@ Citizen.CreateThread(function()
                 Draw3DText(GetEntityCoords(closestVehicleID()), "Vehicle")
                 
                 local closestPed = closestPedID()
+                local secondClosest = closestPedIDignore(closestPed)
                 local closestObject = closestObjectID()
                 local headingObject = GetEntityPhysicsHeading(closestObject)
                 --local pedGroup = GetPedGroupIndex(closestPed)
                 --local groupHash = GetPedRelationshipGroupHash(closestPed)
-                Draw3DText(GetEntityCoords(closestPed), "Ped")
+                Draw3DText(GetEntityCoords(closestPed), "Ped "..GetEntityHealth(closestPed))
+                
+                Draw3DText(GetEntityCoords(secondClosest), "Ped "..GetEntityHealth(secondClosest))
 
                 Draw3DText(GetEntityCoords(closestObject), "Object "..closestObject.." "..headingObject)
             end
