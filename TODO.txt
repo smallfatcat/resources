@@ -1,6 +1,17 @@
-refine tp command
-refine pos command
-Get Bank coords
-check web ui
-cache nearest
-draw markers
+bank job
+	trigger point for door locks
+	hacking game
+	explosive entry
+	police notification
+
+police blips
+	shooting
+	peds
+	robberies
+	stolen cars
+
+drugs
+	drugwars mode
+	coke pickup
+	meth import
+	weed picking

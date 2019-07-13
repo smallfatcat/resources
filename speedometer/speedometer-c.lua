@@ -19,6 +19,8 @@ function itemMenu(menu)
     local openlist = NativeUI.CreateListItem("Open Bank Door", b, 1)
     local closelist = NativeUI.CreateListItem("Close Bank Door", b, 1)
     local emotes = NativeUI.CreateListItem("Emote", emoteList, 1)
+    local tppNames = getTPPnames()
+    local tpplist = NativeUI.CreateListItem("Teleport to...", tppNames, 1)
     
     menu:AddItem(startT)
     menu:AddItem(stopT)
@@ -29,6 +31,7 @@ function itemMenu(menu)
     menu:AddItem(openlist)
     menu:AddItem(closelist)
     menu:AddItem(emotes)
+    menu:AddItem(tpplist)
 
     --menu.MouseControlsEnabled = false
     menu.OnItemSelect = function(sender, item, index)
@@ -71,18 +74,50 @@ function itemMenu(menu)
             ExecuteCommand("e "..emoteName)
             notify("~g~Emoted "..emoteName)
         end
+        if item == tpplist then
+            local name = item:IndexToItem(index)
+            tpSpecial(name)
+            notify("~g~Teleported to "..name)
+        end
     end
 end
 
-itemMenu(mainMenu)
-_menuPool:RefreshIndex()
-mainMenu.Settings.MouseControlsEnabled = false
-mainMenu.Settings.MouseEdgeEnabled = false
-mainMenu.Settings.ControlDisablingEnabled = false
+tpCoords = {
+    {name = "Michael", coords = vector3(-802.311, 175.056, 72.8446)},
+    {name = "Simeon", coords = vector3(-47.16170, -1115.3327, 26.5)},
+    {name = "Franklin's aunt", coords = vector3(-9.96562, -1438.54, 31.1015)},
+    {name = "Floyd", coords = vector3(-1150.703, -1520.713, 10.633)},
+    {name = "TrevorsTrailer", coords = vector3(1985.48132, 3828.76757, 32.5)},
+    {name = "ZancudoGates", coords = vector3(-1600.30100000, 2806.73100000, 18.79683000)},
+    {name = "UFO.Hippie", coords = vector3(2490.47729, 3774.84351, 2414.035)},
+    {name = "UFO.Chiliad", coords = vector3(501.52880000, 5593.86500000, 796.23250000)},
+    {name = "UFO.Zancudo", coords = vector3(-2051.99463, 3237.05835, 1456.97021)},
+    {name = "RedCarpet", coords = vector3(300.5927, 199.7589, 104.3776)},
+    {name = "NorthYankton", coords = vector3(3217.697, -4834.826, 111.8152)},
+    {name = "HeistCarrier", coords = vector3(3082.3117, -4717.1191, 15.2622)},
+    {name = "HeistYacht", coords = vector3(-2043.974,-1031.582, 11.981)},
+    {name = "FinanceOffice1", coords = vector3(-141.1987, -620.913, 168.8205)},
+    {name = "BikerCocaine", coords = vector3(1093.6, -3196.6, -38.99841)},
+    {name = "BikerCounterfeit", coords = vector3(1121.897, -3195.338, -40.4025)},
+    {name = "BikerDocumentForgery", coords = vector3(1165, -3196.6, -39.01306)},
+    {name = "BikerMethLab", coords = vector3(1009.5, -3196.6, -38.99682)},
+    {name = "BikerWeedFarm", coords = vector3(1051.491, -3196.536, -39.14842)},
+    {name = "BikerClubhouse1", coords = vector3(1107.04, -3157.399, -37.51859)},
+    {name = "BikerClubhouse2", coords = vector3(998.4809, -3164.711, -38.90733)},
+    {name = "ImportVehicleWarehouse", coords = vector3(994.5925, -3002.594, -39.64699)},
+    {name = "GunrunningBunker", coords = vector3(892.6384, -3245.8664, -98.2645)},
+    {name = "GunrunningYacht", coords = vector3(-1363.724, 6734.108, 2.44598)},
+    {name = "SmugglerHangar", coords = vector3(-1267.0, -3013.135, -49.5)},
+    {name = "AfterHoursNightclubs", coords = vector3(-1604.664, -3012.583, -78.000)},
+}
 
-print("debugnow: "..tostring(mainMenu.MouseControlsEnabled))
-
-
+function getTPPnames()
+    local names = {}
+    for _,item in ipairs(tpCoords) do
+        table.insert(names,item.name)
+    end
+    return names
+end
 
 DEBUG_DISPLAY = true
 
@@ -214,9 +249,17 @@ function tpBank(bankID)
     SetPedCoordsKeepVehicle(GetPlayerPed(-1), banks[bankID].x, banks[bankID].y, banks[bankID].z)
 end
 
+function tpSpecial(name)
+    for _,item in pairs(tpCoords) do
+        if item.name == name then
+            SetPedCoordsKeepVehicle(GetPlayerPed(-1), item.coords.x, item.coords.y, item.coords.z)
+        end
+    end
+end
+
 RegisterCommand("tpp", function(source)
     --RequestIpl("bkr_biker_interior_placement_interior_3_biker_dlc_int_ware02_milo")
-    local serverFarm =  vector3(895.5518,-3246.038, -98.04907)
+    local serverFarm =  vector3(-1267.0 -3013.135 -49.5)
     SetPedCoordsKeepVehicle(GetPlayerPed(-1), serverFarm.x, serverFarm.y, serverFarm.z)
 end)
 
@@ -503,15 +546,12 @@ function closestPedID()
     local nearest = 1000000
     local closest = 0
     for ped in EnumeratePeds() do
-        if IsPedHuman(ped) then
-            local isInVehicle = GetVehiclePedIsIn(ped, false) ~= 0
-            if ped ~= GetPlayerPed(-1) and not isInVehicle then
-                pedcoords = GetEntityCoords(ped)
-                distance = Vdist2(x, y, z, pedcoords.x, pedcoords.y, pedcoords.z)
-                if (distance < nearest) then
-                    nearest = distance
-                    closest = ped
-                end
+        if pedIsValidTarget(ped) then
+            pedcoords = GetEntityCoords(ped)
+            distance = Vdist2(x, y, z, pedcoords.x, pedcoords.y, pedcoords.z)
+            if (distance < nearest) then
+                nearest = distance
+                closest = ped
             end
         end
     end
@@ -523,15 +563,12 @@ function closestPedIDignore(ignore)
     local nearest = 1000000
     local closest = 0
     for ped in EnumeratePeds() do
-        if IsPedHuman(ped) and (ignore ~= ped) then
-            local isInVehicle = GetVehiclePedIsIn(ped, false) ~= 0
-            if ped ~= GetPlayerPed(-1) and not isInVehicle then
-                pedcoords = GetEntityCoords(ped)
-                distance = Vdist2(x, y, z, pedcoords.x, pedcoords.y, pedcoords.z)
-                if (distance < nearest) then
-                    nearest = distance
-                    closest = ped
-                end
+        if ignore ~= ped and pedIsValidTarget(ped) then
+            pedcoords = GetEntityCoords(ped)
+            distance = Vdist2(x, y, z, pedcoords.x, pedcoords.y, pedcoords.z)
+            if (distance < nearest) then
+                nearest = distance
+                closest = ped
             end
         end
     end
@@ -542,8 +579,7 @@ function closestNPedIDs(N)
     local x, y, z = table.unpack(GetEntityCoords(GetPlayerPed(-1), false))
     local peds = {}
     for ped in EnumeratePeds() do
-        local isInVehicle = GetVehiclePedIsIn(ped, false) ~= 0
-        if ped ~= GetPlayerPed(-1) and not isInVehicle and not IsPedDeadOrDying(ped) then
+        if pedIsValidTarget(ped) then
             pedcoords = GetEntityCoords(ped)
             local distance = Vdist2(x, y, z, pedcoords.x, pedcoords.y, pedcoords.z)
             table.insert(peds, {ped,distance})            
@@ -553,15 +589,9 @@ function closestNPedIDs(N)
     return nearestNPeds
 end
 
-runOnceFlag = true
-function runOnce(distances)
-    if runOnceFlag then
-        runOnceFlag = false
-        for i, n in pairs(distances) do
-            --print("Debug: in runOnce")
-            print("i: "..i.." n: "..n)
-        end
-    end
+function pedIsValidTarget(ped)
+    local isInVehicle = GetVehiclePedIsIn(ped, false) ~= 0
+    return ped ~= GetPlayerPed(-1) and not isInVehicle and not IsPedDeadOrDying(ped) and IsPedHuman(ped)
 end
 
 function closestObjectID()
@@ -689,6 +719,12 @@ local blip5 = addBlip(v5, 225, "5")
 local blip6 = addBlip(v5, 225, "5")
 local blipsVisible = true
 
+itemMenu(mainMenu)
+_menuPool:RefreshIndex()
+mainMenu.Settings.MouseControlsEnabled = false
+mainMenu.Settings.MouseEdgeEnabled = false
+mainMenu.Settings.ControlDisablingEnabled = false
+
 -- Threads
 ---------------------------------------------------------------------------
 
@@ -752,18 +788,19 @@ Citizen.CreateThread(function()
         -- https://runtime.fivem.net/doc/natives/#_0xB7A628320EFF8E47
         --if Vdist2(GetEntityCoords(PlayerPedId(), false), v1) < distance_until_text_disappears then
         if DEBUG_DISPLAY then
-            for i = 1, 4 do
-                local x, y, z = table.unpack(GetEntityCoords(GetPlayerPed(-1), false))
-                local dist = math.ceil(GetDistanceBetweenCoords(banks[i].x, banks[i].y, banks[i].z, x, y, z, true))
-                Draw3DText(banks[i], i.." "..dist.."m")
-            end
+            
+            -- for i = 1, 4 do
+            --     local x, y, z = table.unpack(GetEntityCoords(GetPlayerPed(-1), false))
+            --     local dist = math.ceil(GetDistanceBetweenCoords(banks[i].x, banks[i].y, banks[i].z, x, y, z, true))
+            --     Draw3DText(banks[i], i.." "..dist.."m")
+            -- end
 
             Draw3DText(GetEntityCoords(closestVehicleID()), "Vehicle")
             if threadFrame == 0 then
                 local peds = closestNPedIDs(2)
                 closestPed = peds[1][1]
                 secondClosest = peds[2][1]
-                closestObject = closestObjectID()
+                --closestObject = closestObjectID()
             end
             local headingObject = GetEntityPhysicsHeading(closestObject)
             --local pedGroup = GetPedGroupIndex(closestPed)
@@ -772,7 +809,7 @@ Citizen.CreateThread(function()
             
             Draw3DText(GetEntityCoords(secondClosest), "Ped "..GetEntityHealth(secondClosest))
 
-            Draw3DText(GetEntityCoords(closestObject), "Object "..closestObject.." "..headingObject)
+            --Draw3DText(GetEntityCoords(closestObject), "Object "..closestObject.." "..headingObject)
         end
         threadFrame = threadFrame + 1
         if threadFrame >= threadLimit then
@@ -813,7 +850,7 @@ CreateThread(function()
     end
 end)
 
-DensityMultiplier = 1.0
+DensityMultiplier = 0.9
 Citizen.CreateThread(function()
     while true do
         Citizen.Wait(0)
