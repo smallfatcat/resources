@@ -38,6 +38,7 @@ client_scripts {
     "@NativeUILua-Reloaded/NativeUI.lua",
 
     "@Radiant_Animations/config.lua",
+    "data.lua",
     "speedometer-c.lua",
     "menu.lua"
 }
