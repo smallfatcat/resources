@@ -121,7 +121,8 @@ RegisterCommand("debugDisplay", function(source, args)
             DEBUG_DISPLAY = true
         end
     end
-    print("Debug: "..tostring(DEBUG_DISPLAY))
+    --print("Debug: "..tostring(DEBUG_DISPLAY))
+    threadFrame  = 0
 end)
 
 RegisterCommand("debugTest", function(source, args)
@@ -359,8 +360,9 @@ function kidnapPed()
 end
 
 function fightclub()
-    local ped = closestPedID()
-    local targetped = closestPedIDignore(ped)
+    local peds = closestNPedIDs(2)
+    local ped = peds[1][1]
+    local targetped = peds[2][1]
     SetEntityAsMissionEntity(ped, true, false)
     ClearPedTasksImmediately(ped)
     --SetBlockingOfNonTemporaryEvents(ped, true)
@@ -538,23 +540,28 @@ end
 
 function closestNPedIDs(N)
     local x, y, z = table.unpack(GetEntityCoords(GetPlayerPed(-1), false))
-    local nearest = 1000000
-    local distances = {}
+    local peds = {}
     for ped in EnumeratePeds() do
         local isInVehicle = GetVehiclePedIsIn(ped, false) ~= 0
-        if ped ~= GetPlayerPed(-1) and not isInVehicle then
-            local distance = {}
+        if ped ~= GetPlayerPed(-1) and not isInVehicle and not IsPedDeadOrDying(ped) then
             pedcoords = GetEntityCoords(ped)
-            distance[ped] = Vdist2(x, y, z, pedcoords.x, pedcoords.y, pedcoords.z)
-            table.insert(distances, distance)
+            local distance = Vdist2(x, y, z, pedcoords.x, pedcoords.y, pedcoords.z)
+            table.insert(peds, {ped,distance})            
         end
     end
-    table.sort(distances)
-    local nearestNPeds = {}
-    for ped, dist in ipairs(distances) do
-        table.insert(nearestNPeds, ped)
-    end
+    local nearestNPeds = sortPedsByDistance(peds, N)
     return nearestNPeds
+end
+
+runOnceFlag = true
+function runOnce(distances)
+    if runOnceFlag then
+        runOnceFlag = false
+        for i, n in pairs(distances) do
+            --print("Debug: in runOnce")
+            print("i: "..i.." n: "..n)
+        end
+    end
 end
 
 function closestObjectID()
@@ -644,6 +651,9 @@ timerStart   = 0
 timerEnd     = 0
 timer        = 0
 
+threadFrame  = 0
+threadLimit  = 20
+
 vehicles = {0,0,0,0,0}
 v1 = vector3(1726.0500488281, 3239.4248046875, 41.545928955078)
 v2 = vector3(1726.0500488281, 3244.4248046875, 41.545928955078)
@@ -683,13 +693,13 @@ local blipsVisible = true
 ---------------------------------------------------------------------------
 
 Citizen.CreateThread(function()
-    print("debug: menu")
+    --print("debug: menu")
     while true do
         Citizen.Wait(1)
         _menuPool:ProcessMenus()
         --[[ The "z" button will activate the menu ]]
         if IsControlJustReleased(1, 48) then
-            print("debug: "..tostring(mainMenu.MouseControlsEnabled))
+            --print("debug: "..tostring(mainMenu.MouseControlsEnabled))
             mainMenu:Visible(not mainMenu:Visible())
             --print("debug: menu")
         end
@@ -734,32 +744,40 @@ Citizen.CreateThread(function()
 end)
 
 Citizen.CreateThread(function()
+    threadFrame  = 0
+    local closestPed, secondClosest, closestObject
     while true do
         Citizen.Wait(1)
-            -- the "Vdist2" native checks how far two vectors are from another. 
-            -- https://runtime.fivem.net/doc/natives/#_0xB7A628320EFF8E47
-            --if Vdist2(GetEntityCoords(PlayerPedId(), false), v1) < distance_until_text_disappears then
-            if DEBUG_DISPLAY then
-                for i = 1, 4 do
-                    local x, y, z = table.unpack(GetEntityCoords(GetPlayerPed(-1), false))
-                    local dist = math.ceil(GetDistanceBetweenCoords(banks[i].x, banks[i].y, banks[i].z, x, y, z, true))
-                    Draw3DText(banks[i], i.." "..dist.."m")
-                end
-
-                Draw3DText(GetEntityCoords(closestVehicleID()), "Vehicle")
-                
-                local closestPed = closestPedID()
-                local secondClosest = closestPedIDignore(closestPed)
-                local closestObject = closestObjectID()
-                local headingObject = GetEntityPhysicsHeading(closestObject)
-                --local pedGroup = GetPedGroupIndex(closestPed)
-                --local groupHash = GetPedRelationshipGroupHash(closestPed)
-                Draw3DText(GetEntityCoords(closestPed), "Ped "..GetEntityHealth(closestPed))
-                
-                Draw3DText(GetEntityCoords(secondClosest), "Ped "..GetEntityHealth(secondClosest))
-
-                Draw3DText(GetEntityCoords(closestObject), "Object "..closestObject.." "..headingObject)
+        -- the "Vdist2" native checks how far two vectors are from another. 
+        -- https://runtime.fivem.net/doc/natives/#_0xB7A628320EFF8E47
+        --if Vdist2(GetEntityCoords(PlayerPedId(), false), v1) < distance_until_text_disappears then
+        if DEBUG_DISPLAY then
+            for i = 1, 4 do
+                local x, y, z = table.unpack(GetEntityCoords(GetPlayerPed(-1), false))
+                local dist = math.ceil(GetDistanceBetweenCoords(banks[i].x, banks[i].y, banks[i].z, x, y, z, true))
+                Draw3DText(banks[i], i.." "..dist.."m")
             end
+
+            Draw3DText(GetEntityCoords(closestVehicleID()), "Vehicle")
+            if threadFrame == 0 then
+                local peds = closestNPedIDs(2)
+                closestPed = peds[1][1]
+                secondClosest = peds[2][1]
+                closestObject = closestObjectID()
+            end
+            local headingObject = GetEntityPhysicsHeading(closestObject)
+            --local pedGroup = GetPedGroupIndex(closestPed)
+            --local groupHash = GetPedRelationshipGroupHash(closestPed)
+            Draw3DText(GetEntityCoords(closestPed), "Ped "..GetEntityHealth(closestPed))
+            
+            Draw3DText(GetEntityCoords(secondClosest), "Ped "..GetEntityHealth(secondClosest))
+
+            Draw3DText(GetEntityCoords(closestObject), "Object "..closestObject.." "..headingObject)
+        end
+        threadFrame = threadFrame + 1
+        if threadFrame >= threadLimit then
+            threadFrame = 0
+        end
     end
 end)
 
@@ -857,4 +875,75 @@ end
 
 function EnumeratePickups()
   return EnumerateEntities(FindFirstPickup, FindNextPickup, EndFindPickup)
+end
+
+function pairsByKeys(t, f)
+  local a = {}
+  for n in pairs(t) do table.insert(a, n) end
+  table.sort(a, f)
+  local i = 0      -- iterator variable
+  local iter = function ()   -- iterator function
+    i = i + 1
+    if a[i] == nil then return nil
+    else return a[i], t[ a[i] ]
+    end
+  end
+  return iter
+end
+
+--[[ example sorting iterator
+distArr = {
+      ["7.1"] = 234,
+      ["2"] = 1112,
+      ["7.0"] = 23456,
+    }
+
+function pairsByKeys (t, f)
+      local a = {}
+      for n in pairs(t) do table.insert(a, n) end
+      table.sort(a, f)
+      local i = 0      -- iterator variable
+      local iter = function ()   -- iterator function
+        i = i + 1
+        if a[i] == nil then return nil
+        else return a[i], t[ a[i] ]
+        end
+      end
+      return iter
+    end
+
+for dist, id in pairsByKeys(distArr ) do
+      print(id, dist)
+    end
+]]
+
+--[[ Better Example
+local t = {
+  a = {1,2},
+  b = {2,3},
+  c = {4,1},
+  d = {9,9},
+}
+local keys = {}
+for k in pairs(t) do table.insert(keys, k) end
+table.sort(keys, function(a, b) return t[a][2] < t[b][2] end)
+for _, k in ipairs(keys) do print(k, t[k][1], t[k][2]) end
+--]]
+
+function sortPedsByDistance(t, num)
+    local keys = {}
+    
+    for k in pairs(t) do table.insert(keys, k) end
+    
+    table.sort(keys, function(a, b) return t[a][2] < t[b][2] end)
+
+    local numCount = 1
+    local closestNPeds = {}
+    for _, k in ipairs(keys) do
+        if numCount <= num then
+            table.insert(closestNPeds, {t[k][1], t[k][2]})
+            numCount = numCount + 1
+        end
+    end
+    return closestNPeds
 end
