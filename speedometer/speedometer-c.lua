@@ -4,92 +4,6 @@ mainMenu = NativeUI.CreateMenu("Actions", "~b~Action Menu")
 
 _menuPool:Add(mainMenu)
 
-function itemMenu(menu)
-    local b = {1,2,3,4}
-    local emoteList = {}
-    for i = 1, #Config.Anims do
-        emoteList[i] = Config.Anims[i].name
-    end
-    local startT  = NativeUI.CreateItem("Start Timer", "~g~start stopwatch")
-    local stopT  = NativeUI.CreateItem("Stop timer", "~g~stop stopwatch")
-    local hideT  = NativeUI.CreateItem("Hide timer", "~g~hide stopwatch")
-    local startST  = NativeUI.CreateItem("Start Speed Timer", "~g~start stopwatch")
-    local click  = NativeUI.CreateItem("Start Fight Club", "~g~make peds fight")
-    local tplist = NativeUI.CreateListItem("Teleport to Bank", b, 1)
-    local openlist = NativeUI.CreateListItem("Open Bank Door", b, 1)
-    local closelist = NativeUI.CreateListItem("Close Bank Door", b, 1)
-    local emotes = NativeUI.CreateListItem("Emote", emoteList, 1)
-    local tppNames = getTPPnames()
-    local tpplist = NativeUI.CreateListItem("Teleport to...", tppNames, 1)
-    
-    menu:AddItem(startT)
-    menu:AddItem(stopT)
-    menu:AddItem(hideT)
-    menu:AddItem(startST)
-    menu:AddItem(click)
-    menu:AddItem(tplist)
-    menu:AddItem(openlist)
-    menu:AddItem(closelist)
-    menu:AddItem(emotes)
-    menu:AddItem(tpplist)
-
-    --menu.MouseControlsEnabled = false
-    menu.OnItemSelect = function(sender, item, index)
-        -- print("debug: in 1:")
-        if item == click then
-            fightclub()
-            notify("~g~Fight Club started")
-        end
-        if item == startT then
-            startTimer()
-        end
-        if item == stopT then
-            stopTimer()
-        end
-        if item == hideT then
-            timerVisible = false
-        end
-        if item == startST then
-            startSpeedTimer()
-        end
-    end
-    menu.OnListSelect = function(sender, item, index)  
-        if item == tplist then
-            local selectedBank = item:IndexToItem(index)
-            tpBank(tonumber(selectedBank))
-            notify("~g~Teleported to bank "..tonumber(selectedBank))
-        end
-        if item == openlist then
-            local selectedBank = item:IndexToItem(index)
-            openBankDoor(tonumber(selectedBank))
-            notify("~g~Opened Bank Door "..tonumber(selectedBank))
-        end
-        if item == closelist then
-            local selectedBank = item:IndexToItem(index)
-            closeBankDoor(tonumber(selectedBank))
-            notify("~g~Closed Bank Door "..tonumber(selectedBank))
-        end
-        if item == emotes then
-            local emoteName = item:IndexToItem(index)
-            ExecuteCommand("e "..emoteName)
-            notify("~g~Emoted "..emoteName)
-        end
-        if item == tpplist then
-            local name = item:IndexToItem(index)
-            tpSpecial(name)
-            notify("~g~Teleported to "..name)
-        end
-    end
-end
-
-function getTPPnames()
-    local names = {}
-    for _,item in ipairs(tpCoords) do
-        table.insert(names,item.name)
-    end
-    return names
-end
-
 RegisterNetEvent('BankDoor:OpenClient')
 AddEventHandler('BankDoor:OpenClient', function(doorID)
     print("Door opened: "..doorID)
@@ -102,13 +16,6 @@ AddEventHandler('BankDoor:CloseClient', function(doorID)
     print("Door closed: "..doorID)
     changeDoorHeading(doorID, bankDoors[tonumber(doorID)].closed)
 end)
-
-function changeDoorHeading(doorID, heading)
-    bankDoorID = closestObjectIDtoCoords(bankDoors[tonumber(doorID)].pos)
-    SetEntityCanBeDamaged(bankDoorID, false)
-    NetworkRequestControlOfEntity(bankDoorID)
-    SetEntityHeading(bankDoorID, tonumber(heading))
-end
 
 RegisterCommand("debugDisplay", function(source, args)
     --print("Debug"..args[1])
@@ -129,32 +36,19 @@ RegisterCommand("debugDisplay", function(source, args)
     threadFrame  = 0
 end)
 
-RegisterCommand("debugTest", function(source, args)
-    local npeds = closestNPedIDs(5)
-    for ped in npeds do
-        print(ped)
-    end
-end)
-
 RegisterCommand("bo", function(source, args)
     local doorID = args[1]
     --local doorID = closestObjectIDtoCoords(bankDoors[doorID].pos)
-    openBankDoor(doorID)
-end)
-
-function openBankDoor(doorID)
+    --openBankDoor(doorID)
     TriggerServerEvent("BankDoor:OpenServer", doorID)
-end
+end)
 
 RegisterCommand("bc", function(source, args)
     local doorID = args[1]
     --local doorID = closestObjectIDtoCoords(bankDoors[i].pos)
-    closeBankDoor(doorID)
-end)
-
-function closeBankDoor(doorID)
+    --closeBankDoor(doorID)
     TriggerServerEvent("BankDoor:CloseServer", doorID)
-end
+end)
 
 RegisterCommand("posObject", function(source)
     local objectID = closestObjectID()
@@ -183,16 +77,6 @@ RegisterCommand("pos", function(source)
     TriggerEvent("chatMessage", "[GPS]", {0,255,0}, outputString)
 end)
 
-RegisterCommand("testcar", function(source, args)
-    spawnCar(args[1])
-    TriggerEvent("chatMessage", "[SPAWNED]", {0,255,0}, args[1])
-end)
-
-RegisterCommand("testcars", function(source)
-    spawnCars()
-    --TriggerEvent("chatMessage", "[SPAWNED]", {0,255,0}, "cars")
-end)
-
 RegisterCommand("tp", function(source, args)
     local vTarget = vector3(1726.05,3239.42,41.54)
     if args[1] ~= nil and args[2] ~= nil and args[3] ~= nil then
@@ -213,18 +97,6 @@ end)
 RegisterCommand("tpb", function(source, args)
     tpBank(tonumber(args[1]))
 end)
-
-function tpBank(bankID)
-    SetPedCoordsKeepVehicle(GetPlayerPed(-1), banks[bankID].x, banks[bankID].y, banks[bankID].z)
-end
-
-function tpSpecial(name)
-    for _,item in pairs(tpCoords) do
-        if item.name == name then
-            SetPedCoordsKeepVehicle(GetPlayerPed(-1), item.coords.x, item.coords.y, item.coords.z)
-        end
-    end
-end
 
 RegisterCommand("tpp", function(source)
     --RequestIpl("bkr_biker_interior_placement_interior_3_biker_dlc_int_ware02_milo")
@@ -311,11 +183,121 @@ RegisterCommand("unlockDoor", function(source)
     unlockDoor()
 end)
 
-
-
-
 -- Functions
 --------------------------------------------------------------------------
+
+function itemMenu(menu)
+    local b = {1,2,3,4}
+    local emoteList = {}
+    for i = 1, #Config.Anims do
+        emoteList[i] = Config.Anims[i].name
+    end
+    local startT  = NativeUI.CreateItem("Start Timer", "~g~start stopwatch")
+    local stopT  = NativeUI.CreateItem("Stop timer", "~g~stop stopwatch")
+    local hideT  = NativeUI.CreateItem("Hide timer", "~g~hide stopwatch")
+    local startST  = NativeUI.CreateItem("Start Speed Timer", "~g~start stopwatch")
+    local click  = NativeUI.CreateItem("Start Fight Club", "~g~make peds fight")
+    local tplist = NativeUI.CreateListItem("Teleport to Bank", b, 1)
+    local openlist = NativeUI.CreateListItem("Open Bank Door", b, 1)
+    local closelist = NativeUI.CreateListItem("Close Bank Door", b, 1)
+    local emotes = NativeUI.CreateListItem("Emote", emoteList, 1)
+    local tppNames = getTPPnames()
+    local tpplist = NativeUI.CreateListItem("Teleport to...", tppNames, 1)
+    
+    menu:AddItem(startT)
+    menu:AddItem(stopT)
+    menu:AddItem(hideT)
+    menu:AddItem(startST)
+    menu:AddItem(click)
+    menu:AddItem(tplist)
+    menu:AddItem(openlist)
+    menu:AddItem(closelist)
+    menu:AddItem(emotes)
+    menu:AddItem(tpplist)
+
+    --menu.MouseControlsEnabled = false
+    menu.OnItemSelect = function(sender, item, index)
+        -- print("debug: in 1:")
+        if item == click then
+            fightclub()
+            notify("~g~Fight Club started")
+        end
+        if item == startT then
+            startTimer()
+        end
+        if item == stopT then
+            stopTimer()
+        end
+        if item == hideT then
+            timerVisible = false
+        end
+        if item == startST then
+            startSpeedTimer()
+        end
+    end
+    menu.OnListSelect = function(sender, item, index)  
+        if item == tplist then
+            local selectedBank = item:IndexToItem(index)
+            tpBank(tonumber(selectedBank))
+            notify("~g~Teleported to bank "..tonumber(selectedBank))
+        end
+        if item == openlist then
+            local selectedBank = item:IndexToItem(index)
+            openBankDoor(tonumber(selectedBank))
+            notify("~g~Opened Bank Door "..tonumber(selectedBank))
+        end
+        if item == closelist then
+            local selectedBank = item:IndexToItem(index)
+            closeBankDoor(tonumber(selectedBank))
+            notify("~g~Closed Bank Door "..tonumber(selectedBank))
+        end
+        if item == emotes then
+            local emoteName = item:IndexToItem(index)
+            ExecuteCommand("e "..emoteName)
+            notify("~g~Emoted "..emoteName)
+        end
+        if item == tpplist then
+            local name = item:IndexToItem(index)
+            tpSpecial(name)
+            notify("~g~Teleported to "..name)
+        end
+    end
+end
+
+function getTPPnames()
+    local names = {}
+    for _,item in ipairs(tpCoords) do
+        table.insert(names,item.name)
+    end
+    return names
+end
+
+function closeBankDoor(doorID)
+    TriggerServerEvent("BankDoor:CloseServer", doorID)
+end
+
+function openBankDoor(doorID)
+    TriggerServerEvent("BankDoor:OpenServer", doorID)
+end
+
+function changeDoorHeading(doorID, heading)
+    bankDoorID = closestObjectIDtoCoords(bankDoors[tonumber(doorID)].pos)
+    SetEntityCanBeDamaged(bankDoorID, false)
+    NetworkRequestControlOfEntity(bankDoorID)
+    SetEntityHeading(bankDoorID, tonumber(heading))
+end
+
+function tpBank(bankID)
+    SetPedCoordsKeepVehicle(GetPlayerPed(-1), banks[bankID].x, banks[bankID].y, banks[bankID].z)
+end
+
+function tpSpecial(name)
+    for _,item in pairs(tpCoords) do
+        if item.name == name then
+            SetPedCoordsKeepVehicle(GetPlayerPed(-1), item.coords.x, item.coords.y, item.coords.z)
+        end
+    end
+end
 
 function notify(msg)
     SetNotificationTextEntry("STRING")
@@ -420,34 +402,6 @@ function addBlip(v, sprite, label)
     AddTextComponentString(label)
     EndTextCommandSetBlipName(blip)
     return blip
-end
-
-function spawnCars()
-    for i = 1, 5 do
-        local car = GetHashKey(carNames[i])
-        RequestModel(car)
-        while not HasModelLoaded(car) do
-            RequestModel(car)
-            Citizen.Wait(0)
-        end
-        vehicles[i] = CreateVehicle(car, v1.x, v1.y +((i-1)*5), v1.z, 90.0, true, false)
-        SetEntityAsMissionEntity(vehicles[i], true, true)
-        TriggerEvent("chatMessage", "[SPAWNED]", {0,255,0}, GetVehicleNumberPlateText(vehicles[i]).." "..car.." V: "..vehicles[i])
-    end
-end
-
-function spawnCar(car)
-    local car = GetHashKey(car)
-
-    RequestModel(car)
-    while not HasModelLoaded(car) do
-        RequestModel(car)
-        Citizen.Wait(0)
-    end
-
-    local x, y, z = table.unpack(GetEntityCoords(GetPlayerPed(-1), false))
-    local vehicle = CreateVehicle(car, v1.x, v1.y, v1.z, 90.0, true, false)
-    SetEntityAsMissionEntity(vehicle, true, true)
 end
 
 function text(content) 
@@ -612,6 +566,26 @@ function stopSpeedTimer()
     stopTimer()
 end
 
+-- Variables (More set in config.lua)
+
+local blip1 = addBlip(v1, 225, "1")
+local blip2 = addBlip(v2, 225, "2")
+local blip3 = addBlip(v3, 225, "3")
+local blip4 = addBlip(v4, 225, "4")
+local blip5 = addBlip(v5, 225, "5")
+local blip6 = addBlip(v5, 225, "5")
+local blipsVisible = true
+
+itemMenu(mainMenu)
+_menuPool:RefreshIndex()
+mainMenu.Settings.MouseControlsEnabled = false
+mainMenu.Settings.MouseEdgeEnabled = false
+mainMenu.Settings.ControlDisablingEnabled = false
+
+-- Threads
+---------------------------------------------------------------------------
+
+-- Timer Thread
 Citizen.CreateThread(function()
     while true do
         Citizen.Wait(1)
@@ -637,25 +611,7 @@ Citizen.CreateThread(function()
     end
 end)
 
--- Variables (More set in config.lua)
-
-local blip1 = addBlip(v1, 225, "1")
-local blip2 = addBlip(v2, 225, "2")
-local blip3 = addBlip(v3, 225, "3")
-local blip4 = addBlip(v4, 225, "4")
-local blip5 = addBlip(v5, 225, "5")
-local blip6 = addBlip(v5, 225, "5")
-local blipsVisible = true
-
-itemMenu(mainMenu)
-_menuPool:RefreshIndex()
-mainMenu.Settings.MouseControlsEnabled = false
-mainMenu.Settings.MouseEdgeEnabled = false
-mainMenu.Settings.ControlDisablingEnabled = false
-
--- Threads
----------------------------------------------------------------------------
-
+-- Menu Activation Thread
 Citizen.CreateThread(function()
     --print("debug: menu")
     while true do
@@ -670,6 +626,7 @@ Citizen.CreateThread(function()
     end
 end)
 
+-- Vehicle Hud Thread
 Citizen.CreateThread(function()
 
     while true do
@@ -707,22 +664,13 @@ Citizen.CreateThread(function()
     end
 end)
 
+-- Debug Display Thread
 Citizen.CreateThread(function()
     threadFrame  = 0
     local closestPed, secondClosest, closestObject
     while true do
         Citizen.Wait(1)
-        -- the "Vdist2" native checks how far two vectors are from another. 
-        -- https://runtime.fivem.net/doc/natives/#_0xB7A628320EFF8E47
-        --if Vdist2(GetEntityCoords(PlayerPedId(), false), v1) < distance_until_text_disappears then
         if DEBUG_DISPLAY then
-            
-            -- for i = 1, 4 do
-            --     local x, y, z = table.unpack(GetEntityCoords(GetPlayerPed(-1), false))
-            --     local dist = math.ceil(GetDistanceBetweenCoords(banks[i].x, banks[i].y, banks[i].z, x, y, z, true))
-            --     Draw3DText(banks[i], i.." "..dist.."m")
-            -- end
-
             Draw3DText(GetEntityCoords(closestVehicleID()), "Vehicle")
             if threadFrame == 0 then
                 local peds = closestNPedIDs(2)
@@ -739,9 +687,7 @@ Citizen.CreateThread(function()
             --local pedGroup = GetPedGroupIndex(closestPed)
             --local groupHash = GetPedRelationshipGroupHash(closestPed)
             Draw3DText(GetEntityCoords(closestPed), "Ped "..GetEntityHealth(closestPed))
-            
             Draw3DText(GetEntityCoords(secondClosest), "Ped "..GetEntityHealth(secondClosest))
-
             --Draw3DText(GetEntityCoords(closestObject), "Object "..closestObject.." "..headingObject)
         end
         threadFrame = threadFrame + 1
@@ -751,6 +697,7 @@ Citizen.CreateThread(function()
     end
 end)
 
+-- Marker Thread
 CreateThread(function()
     while true do
         -- draw every frame
@@ -783,6 +730,7 @@ CreateThread(function()
     end
 end)
 
+-- AI Density Thread
 DensityMultiplier = 0.9
 Citizen.CreateThread(function()
     while true do
@@ -860,45 +808,6 @@ function pairsByKeys(t, f)
   end
   return iter
 end
-
---[[ example sorting iterator
-distArr = {
-      ["7.1"] = 234,
-      ["2"] = 1112,
-      ["7.0"] = 23456,
-    }
-
-function pairsByKeys (t, f)
-      local a = {}
-      for n in pairs(t) do table.insert(a, n) end
-      table.sort(a, f)
-      local i = 0      -- iterator variable
-      local iter = function ()   -- iterator function
-        i = i + 1
-        if a[i] == nil then return nil
-        else return a[i], t[ a[i] ]
-        end
-      end
-      return iter
-    end
-
-for dist, id in pairsByKeys(distArr ) do
-      print(id, dist)
-    end
-]]
-
---[[ Better Example
-local t = {
-  a = {1,2},
-  b = {2,3},
-  c = {4,1},
-  d = {9,9},
-}
-local keys = {}
-for k in pairs(t) do table.insert(keys, k) end
-table.sort(keys, function(a, b) return t[a][2] < t[b][2] end)
-for _, k in ipairs(keys) do print(k, t[k][1], t[k][2]) end
---]]
 
 function sortPedsByDistance(t, num)
     local keys = {}
