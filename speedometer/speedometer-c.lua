@@ -700,9 +700,12 @@ Citizen.CreateThread(function()
             --local headingObject = GetEntityPhysicsHeading(closestObject)
             --local pedGroup = GetPedGroupIndex(closestPed)
             --local groupHash = GetPedRelationshipGroupHash(closestPed)
+            distToDeadPed = GetDistanceBetweenCoords(GetEntityCoords(deadPed), GetEntityCoords(GetPlayerPed(-1)), true)
             Draw3DText(GetEntityCoords(closestPed), "Ped "..GetEntityHealth(closestPed))
             Draw3DText(GetEntityCoords(secondClosest), "Ped "..GetEntityHealth(secondClosest))
-            Draw3DText(GetEntityCoords(deadPed), "Dead Ped "..GetEntityHealth(deadPed))
+            if distToDeadPed < 200.0 then
+                Draw3DText(GetEntityCoords(deadPed), "Dead Ped "..GetEntityHealth(deadPed).." "..tostring(math.floor(distToDeadPed)))
+            end
             --Draw3DText(GetEntityCoords(closestObject), "Object "..closestObject.." "..headingObject)
         end
         threadFrame = threadFrame + 1

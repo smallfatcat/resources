@@ -45,6 +45,7 @@ controlPanel4 = vector3(1175.542, 2710.861, 38.226)
 carNames = {"jester2","cheetah","zentorno","infernus","comet3", "carbonizzare", "autarch", "bullet", "scramjet", "dodo"}
 
 tpCoords = {
+		{name = "Pillbox", coords = vector3(291.168,-582.725,43.166)},
     {name = "Michael", coords = vector3(-802.311, 175.056, 72.8446)},
     {name = "Simeon", coords = vector3(-47.16170, -1115.3327, 26.5)},
     {name = "Franklin's aunt", coords = vector3(-9.96562, -1438.54, 31.1015)},
