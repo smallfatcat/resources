@@ -42,7 +42,7 @@ controlPanel2 = vector3(-2956.500, 482.063, 15.897)
 controlPanel3 = vector3(-104.604, 6473.443, 31.795)
 controlPanel4 = vector3(1175.542, 2710.861, 38.226)
 --print("Debug:"..bankDoors[2].open)
-carNames = {"jester2","cheetah","zentorno","infernus","comet3", "carbonizzare", "autarch", "bullet", "scramjet", "t20"}
+carNames = {"jester2","cheetah","zentorno","infernus","comet3", "carbonizzare", "autarch", "bullet", "scramjet", "dodo"}
 
 tpCoords = {
     {name = "Michael", coords = vector3(-802.311, 175.056, 72.8446)},

@@ -56,21 +56,6 @@ RegisterCommand("posObject", function(source)
     print("ObjectCoords: "..coords.x..", "..coords.y..", "..coords.z)
 end)
 
-RegisterCommand("fuel", function(source, args)
-    if(IsPedInAnyVehicle(GetPlayerPed(-1), false)) then
-        local vehicle = GetVehiclePedIsIn(GetPlayerPed(-1), false)
-        SetVehicleFuelLevel(vehicle,tonumber(args[1]))
-        --Citizen.Trace(tostring(args[1]))
-    end
-end)
-
-RegisterCommand("maxv", function(source, args)
-    if(IsPedInAnyVehicle(GetPlayerPed(-1), false)) then
-        local vehicle = GetVehiclePedIsIn(GetPlayerPed(-1), false)
-        SetVehicleHandlingFloat(vehicle, 'CHandlingData', 'fInitialDriveMaxFlatVel', tonumber(args[1]))
-    end
-end)
-
 RegisterCommand("pos", function(source)
     local x, y, z = table.unpack(GetEntityCoords(GetPlayerPed(-1), false))
     outputString = "X: " .. x .." Y: " .. y .." Z: " .. z
@@ -80,15 +65,6 @@ end)
 RegisterCommand("tp", function(source, args)
     local vTarget = vector3(1726.05,3239.42,41.54)
     if args[1] ~= nil and args[2] ~= nil and args[3] ~= nil then
-        --print("vTarget.x = "..vTarget.x.."type: "..type(vTarget.x))
-        --print("vTarget.y = "..vTarget.y.."type: "..type(vTarget.y))
-        --print("vTarget.z = "..vTarget.z.."type: "..type(vTarget.z))
-        --print("args[1] = "..args[1].."type: "..type(tonumber(args[1])))
-        --print("args[2] = "..args[2].."type: "..type(tonumber(args[2])))
-        --print("args[3] = "..args[3].."type: "..type(tonumber(args[3])))
-        --vTarget.x = tonumber(args[1])
-        --vTarget.y = tonumber(args[2])
-        --vTarget.z = tonumber(args[3])
         vTarget = vector3(tonumber(args[1]), tonumber(args[2]),tonumber(args[3]))
     end
     SetPedCoordsKeepVehicle(GetPlayerPed(-1), vTarget.x, vTarget.y, vTarget.z)
@@ -96,20 +72,6 @@ end)
 
 RegisterCommand("tpb", function(source, args)
     tpBank(tonumber(args[1]))
-end)
-
-RegisterCommand("tpp", function(source)
-    --RequestIpl("bkr_biker_interior_placement_interior_3_biker_dlc_int_ware02_milo")
-    local serverFarm =  vector3(-1267.0 -3013.135 -49.5)
-    SetPedCoordsKeepVehicle(GetPlayerPed(-1), serverFarm.x, serverFarm.y, serverFarm.z)
-end)
-
-RegisterCommand("boom", function(source)
-    --ExplodeVehicle(vehicles[tonumber(args[1])],true,true)
-    for i = 1, 5 do
-        DeleteVehicle(vehicles[i])
-        TriggerEvent("chatMessage", "[BOOM]", {0,255,0}, vehicles[i])
-    end
 end)
 
 RegisterCommand("deleteVehicle", function(source)
@@ -143,10 +105,6 @@ RegisterCommand("blips", function(source)
     end
 end)
 
-RegisterCommand("closest", function(source)
-    print(closestVehicleID())
-end)
-
 RegisterCommand("lineSpawner", function(source)
     lineSpawner()
 end)
@@ -167,20 +125,16 @@ RegisterCommand("trackP", function(source)
     trackPed()
 end)
 
-RegisterCommand("openDoor", function(source, args)
-    openDoor(tonumber(args[1]))
+RegisterCommand("medic", function(source)
+    medicPed()
 end)
 
-RegisterCommand("checkDoor", function(source, args)
-    checkDoor()
+RegisterCommand("police", function(source)
+    policePed()
 end)
 
-RegisterCommand("lockDoor", function(source)
-    lockDoor()
-end)
-
-RegisterCommand("unlockDoor", function(source)
-    unlockDoor()
+RegisterCommand("weather", function(source)
+    weather()
 end)
 
 -- Functions
@@ -339,6 +293,41 @@ function trackPed()
     AddBlipForEntity(closestPedID())
 end
 
+function medicPed()
+    local ped = closestDeadPedID()
+    --NetworkSetMissionFinished()
+    --local q = IsEntityAMissionEntity(ped)
+    print("debug: closestDeadPedID:"..ped.." mission: "..tostring(q))
+    CreateIncidentWithEntity(5, ped, 2, 3.0)
+end
+
+function policePed()
+    local ped = closestPedID()
+    --NetworkSetMissionFinished()
+    --local q = IsEntityAMissionEntity(ped)
+    print("debug: closestDeadPedID:"..ped.." mission: "..tostring(q))
+    CreateIncidentWithEntity(7, ped, 2, 3.0)
+end
+
+function weather()
+    print(tostring(GetNextWeatherTypeHashName()))
+    --SetWeatherTypeNowPersist("RAIN")
+    SetWeatherTypeOverTime("THUNDER", 10)
+    --SetWeatherTypeOverTime("CLEAR", 30000)
+    --[["CLEAR"  
+        "EXTRASUNNY"  
+        "CLOUDS"  
+        "OVERCAST"  
+        "RAIN"  
+        "CLEARING"  
+        "THUNDER"  
+        "SMOG"  
+        "FOGGY"  
+        "XMAS"  
+        "SNOWLIGHT"  
+        "BLIZZARD"--]]
+end
+
 function kidnapPed()
     local ped = closestPedID()
     SetEntityAsMissionEntity(ped, true, false)
@@ -481,6 +470,23 @@ function closestPedID()
     return closest
 end
 
+function closestDeadPedID()
+    local x, y, z = table.unpack(GetEntityCoords(GetPlayerPed(-1), false))
+    local nearest = 1000000
+    local closest = 0
+    for ped in EnumeratePeds() do
+        if pedIsValidVictim(ped) then
+            pedcoords = GetEntityCoords(ped)
+            distance = Vdist2(x, y, z, pedcoords.x, pedcoords.y, pedcoords.z)
+            if (distance < nearest) then
+                nearest = distance
+                closest = ped
+            end
+        end
+    end
+    return closest
+end
+
 function closestPedIDignore(ignore)
     local x, y, z = table.unpack(GetEntityCoords(GetPlayerPed(-1), false))
     local nearest = 1000000
@@ -515,6 +521,12 @@ end
 function pedIsValidTarget(ped)
     local isInVehicle = GetVehiclePedIsIn(ped, false) ~= 0
     return ped ~= GetPlayerPed(-1) and not isInVehicle and not IsPedDeadOrDying(ped) and IsPedHuman(ped)
+    --return ped ~= GetPlayerPed(-1) and not isInVehicle and IsPedHuman(ped)
+end
+
+function pedIsValidVictim(ped)
+    local isInVehicle = GetVehiclePedIsIn(ped, false) ~= 0
+    return ped ~= GetPlayerPed(-1) and not isInVehicle and IsPedHuman(ped) and IsPedDeadOrDying(ped)
 end
 
 function closestObjectID()
@@ -672,8 +684,10 @@ Citizen.CreateThread(function()
         Citizen.Wait(1)
         if DEBUG_DISPLAY then
             Draw3DText(GetEntityCoords(closestVehicleID()), "Vehicle")
+            local deadPed = closestDeadPedID()
             if threadFrame == 0 then
                 local peds = closestNPedIDs(2)
+                
                 if peds ~= nil and peds[1] ~= nil and peds[2] ~= nil then
                     closestPed = peds[1][1]
                     secondClosest = peds[2][1]
@@ -688,6 +702,7 @@ Citizen.CreateThread(function()
             --local groupHash = GetPedRelationshipGroupHash(closestPed)
             Draw3DText(GetEntityCoords(closestPed), "Ped "..GetEntityHealth(closestPed))
             Draw3DText(GetEntityCoords(secondClosest), "Ped "..GetEntityHealth(secondClosest))
+            Draw3DText(GetEntityCoords(deadPed), "Dead Ped "..GetEntityHealth(deadPed))
             --Draw3DText(GetEntityCoords(closestObject), "Object "..closestObject.." "..headingObject)
         end
         threadFrame = threadFrame + 1
