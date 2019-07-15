@@ -1,8 +1,12 @@
+print("loaded data.lua")
+
 -- Variables
 --------------------------------------------------------------------------
 
 DEBUG_DISPLAY = true
 DEBUG_OBJECT = false
+
+hackListenerStarted = false
 
 limitBottom = 1.0
 limitTop = 100.0

@@ -1,22 +1,10 @@
+print("loaded sfc_main.lua")
+
 -- Test lua script for FiveM
 _menuPool = NativeUI.CreatePool()
 mainMenu = NativeUI.CreateMenu("Actions", "~b~Action Menu")
 
 _menuPool:Add(mainMenu)
-
-RegisterNetEvent('BankDoor:OpenClient')
-AddEventHandler('BankDoor:OpenClient', function(bankID, doorID)
-    print("Door opened: "..doorID)
-    print("bankID"..bankID.."doorID"..doorID)
-    changeDoorHeading(bankID, doorID, "open")
-end)
-
-RegisterNetEvent('BankDoor:CloseClient')
-AddEventHandler('BankDoor:CloseClient', function(bankID, doorID)
-    print("Door closed: "..doorID)
-    print("bankID"..bankID.."doorID"..doorID)
-    changeDoorHeading(bankID, doorID, "close")
-end)
 
 RegisterCommand("freezeDoor", function(source, args)
     FreezeEntityPosition(tonumber(args[1]), true)
@@ -49,22 +37,6 @@ RegisterCommand("debugDisplay", function(source, args)
     threadFrame  = 0
 end)
 
-RegisterCommand("bo", function(source, args)
-    local bankID = args[1]
-    local doorID = args[2]
-    --local doorID = closestObjectIDtoCoords(bankDoors[doorID].pos)
-    --openBankDoor(doorID)
-    TriggerServerEvent("BankDoor:OpenServer", bankID, doorID)
-end)
-
-RegisterCommand("bc", function(source, args)
-    local bankID = args[1]
-    local doorID = args[2]
-    --local doorID = closestObjectIDtoCoords(bankDoors[i].pos)
-    --closeBankDoor(doorID)
-    TriggerServerEvent("BankDoor:CloseServer", bankID, doorID)
-end)
-
 RegisterCommand("posObject", function(source)
     local objectID = closestObjectID()
     local coords = GetEntityCoords(objectID, false)
@@ -83,10 +55,6 @@ RegisterCommand("tp", function(source, args)
         vTarget = vector3(tonumber(args[1]), tonumber(args[2]),tonumber(args[3]))
     end
     SetPedCoordsKeepVehicle(GetPlayerPed(-1), vTarget.x, vTarget.y, vTarget.z)
-end)
-
-RegisterCommand("tpb", function(source, args)
-    tpBank(tonumber(args[1]))
 end)
 
 RegisterCommand("deleteVehicle", function(source)
@@ -241,33 +209,6 @@ function getTPPnames()
     return names
 end
 
-function closeBankDoor(bankID, doorID)
-    TriggerServerEvent("BankDoor:CloseServer", bankID, doorID)
-end
-
-function openBankDoor(bankID, doorID)
-    TriggerServerEvent("BankDoor:OpenServer", bankID, doorID)
-end
-
-function changeDoorHeading(bankID, doorID, action)
-    local doorCoords = banksObject[bankID].doors[doorID].pos
-    local newHeading
-    if action == "open" then
-        newHeading = banksObject[bankID].doors[doorID].heading_open
-    else
-        newHeading = banksObject[bankID].doors[doorID].heading_closed
-    end
-    bankDoorID = closestObjectIDtoCoords(doorCoords)
-    SetEntityCanBeDamaged(bankDoorID, false)
-    NetworkRequestControlOfEntity(bankDoorID)
-    SetEntityHeading(bankDoorID, tonumber(newHeading))
-    print("bankID"..bankID.."doorID"..doorID.."action"..action.."newHeading"..newHeading)
-end
-
-function tpBank(bankID)
-    SetPedCoordsKeepVehicle(GetPlayerPed(-1), banks[bankID].x, banks[bankID].y, banks[bankID].z)
-end
-
 function tpSpecial(name)
     for _,item in pairs(tpCoords) do
         if item.name == name then
@@ -280,31 +221,6 @@ function notify(msg)
     SetNotificationTextEntry("STRING")
     AddTextComponentString(msg)
     DrawNotification(true,false)
-end
-
-function checkDoor()
-    doorID = closestObjectID()
-    Heading = GetEntityHeading(doorID)
-    print("Heading "..Heading)
-end
-
-function lockDoor()
-    doorID = closestObjectID()
-    NetworkRequestControlOfEntity(doorID)
-    FreezeEntityPosition(doorID, true)
-end
-
-function unlockDoor()
-    doorID = closestObjectID()
-    NetworkRequestControlOfEntity(doorID)
-    FreezeEntityPosition(doorID, false)
-end
-
-function openDoor(Heading)
-    doorID = closestObjectID()
-    SetEntityCanBeDamaged(doorID, false)
-    NetworkRequestControlOfEntity(doorID)
-    SetEntityHeading(doorID, tonumber(Heading))
 end
 
 function trackVehicle()
@@ -601,19 +517,6 @@ function stopSpeedTimer()
     stopTimer()
 end
 
-function detectConsole()
-    for bankID = 1, #banksObject do
-        local bank = banksObject[bankID]
-        for consoleID = 1, #bank.consoles do
-            --print("bankID:"..bankID.." consoleID:"..consoleID.."#banksObject"..#banksObject)
-            if Vdist2(bank.consoles[consoleID].pos, GetEntityCoords(GetPlayerPed(-1))) < 4 then
-                return true, bank.consoles[consoleID].pos
-            end
-        end
-    end
-    return false, vector3(0,0,0)
-end
-
 -- Variables (More set in config.lua)
 
 local blip1 = addBlip(v1, 225, "1")
@@ -630,9 +533,11 @@ mainMenu.Settings.MouseControlsEnabled = false
 mainMenu.Settings.MouseEdgeEnabled = false
 mainMenu.Settings.ControlDisablingEnabled = false
 
-local _progressBarPool = NativeUI.ProgressBarPool()
+_progressBarPool = NativeUI.ProgressBarPool()
+HackingProgressBar = NativeUI.CreateProgressBarItem("Hacking console...")
+_progressBarPool:Add(HackingProgressBar)
 
-Citizen.CreateThread(function()
+--[[Citizen.CreateThread(function()
     while true do
         Citizen.Wait(1)
         _progressBarPool:Draw()
@@ -641,6 +546,7 @@ end)
 
 local Item = NativeUI.CreateProgressBarItem("Testing timer bar...")
 _progressBarPool:Add(Item)
+
 local progress = 0
 Citizen.CreateThread(function()
     while true do
@@ -652,10 +558,12 @@ Citizen.CreateThread(function()
         end
         Item:SetPercentage(progress)
     end
-end)
+end)--]]
 
 -- Threads
 ---------------------------------------------------------------------------
+
+
 
 -- Timer Thread
 Citizen.CreateThread(function()
@@ -777,10 +685,6 @@ Citizen.CreateThread(function()
             end
             if DEBUG_OBJECT then
                 Draw3DText(GetEntityCoords(closestObject), "Object "..closestObject.." "..headingObject)
-            end
-            local consoleDetected, consolePos = detectConsole()
-            if consoleDetected then
-                Draw3DText(consolePos, "Console")
             end
         end
         threadFrame = threadFrame + 1
