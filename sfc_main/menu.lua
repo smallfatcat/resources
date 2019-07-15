@@ -84,16 +84,36 @@ function itemMenu(menu)
     end
 end
 
+function clothesMenuFunc(menu)
+    local component0 = getComponentArray(46)
+    local comp0 = NativeUI.CreateListItem("comp0", component0, 1)
+    menu:AddItem(comp0)
+end
+
+function getComponentArray(num)
+    local retValue = {}
+    for i = 0, (num-1) do
+        retValue[i] = i
+    end
+end
+
 _menuPool = NativeUI.CreatePool()
 mainMenu = NativeUI.CreateMenu("Actions", "~b~Action Menu")
+clothesMenu = NativeUI.CreateMenu("Clothes", "~b~Clothes Menu")
+
 
 _menuPool:Add(mainMenu)
+_menuPool:Add(clothesMenu)
 
 itemMenu(mainMenu)
+clothesMenuFunc(clothesMenu)
 _menuPool:RefreshIndex()
 mainMenu.Settings.MouseControlsEnabled = false
 mainMenu.Settings.MouseEdgeEnabled = false
 mainMenu.Settings.ControlDisablingEnabled = false
+clothesMenu.Settings.MouseControlsEnabled = false
+clothesMenu.Settings.MouseEdgeEnabled = false
+clothesMenu.Settings.ControlDisablingEnabled = false
 
 _progressBarPool = NativeUI.ProgressBarPool()
 HackingProgressBar = NativeUI.CreateProgressBarItem("Hacking console...")

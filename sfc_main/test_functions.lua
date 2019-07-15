@@ -1,3 +1,55 @@
+--[[
+GET_PED_DRAWABLE_VARIATION(Ped ped, int componentId)
+GET_NUMBER_OF_PED_DRAWABLE_VARIATIONS(Ped ped, int componentId)
+GET_PED_TEXTURE_VARIATION(Ped ped, int componentId)
+GET_NUMBER_OF_PED_TEXTURE_VARIATIONS(Ped ped, int componentId, int drawableId)
+SET_PED_COMPONENT_VARIATION(Ped ped, int componentId, int drawableId, int textureId, int paletteId)
+SET_PED_RANDOM_COMPONENT_VARIATION(Ped ped, BOOL p1)
+SET_PED_DEFAULT_COMPONENT_VARIATION(Ped ped)
+--]]
+
+RegisterCommand("setProp", function(source, args)
+    setProp(tonumber(args[1]), tonumber(args[2]))
+end)
+
+RegisterCommand("getProps", function(source, args)
+    getAvailableProps()
+end)
+
+RegisterCommand("setSkin", function(source, args)
+    local skin = "mp_m_freemode_01"
+    setSkin(skin)
+end)
+
+
+function setSkin(skin)
+    Citizen.CreateThread(function()
+        local model = GetHashKey(skin)
+        RequestModel(model)
+        while not HasModelLoaded(model) do
+            RequestModel(model)
+            Citizen.Wait(0)
+        end
+        SetPlayerModel(PlayerId(), model)
+        SetPedComponentVariation(GetPlayerPed(-1), 0, 0, 0, 2)
+    end)
+end
+
+function setProp(componentId, drawableId)
+    ped = GetPlayerPed(-1)
+    textureId = 0
+    paletteId = 0
+    SetPedComponentVariation(ped, componentId, drawableId, textureId, paletteId)
+end
+
+function getAvailableProps()
+    ped = GetPlayerPed(-1)
+    for i = 0, 11 do
+        numberOfVariations = GetNumberOfPedDrawableVariations(ped, i)
+        print("componentId: "..i.." numberOfVariations: "..numberOfVariations)
+    end
+end
+
 function checkDoor()
     doorID = closestObjectID()
     Heading = GetEntityHeading(doorID)
