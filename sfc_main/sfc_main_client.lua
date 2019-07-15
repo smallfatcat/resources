@@ -22,6 +22,10 @@ RegisterCommand("freezeDoor", function(source, args)
     FreezeEntityPosition(tonumber(args[1]), true)
 end)
 
+RegisterCommand("animTest", function(source, args)
+    TriggerEvent("Radiant_Animations:Hack")
+end)
+
 RegisterCommand("unfreezeDoor", function(source, args)
     FreezeEntityPosition(tonumber(args[1]), false)
 end)

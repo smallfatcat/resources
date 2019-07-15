@@ -158,6 +158,38 @@ AddEventHandler('Radiant_Animations:Walking', function(ad)
 	RemoveAnimSet(ad)
 end)
 
+---
+
+RegisterNetEvent('Radiant_Animations:Hack')  -- Too many waits to make it work properly within the config
+AddEventHandler('Radiant_Animations:Hack', function()
+	local player = PlayerPedId()
+	local ad = "anim@heists@ornate_bank@hack_heels"
+	local ad2 = "anim@heists@ornate_bank@hack"
+
+	if ( DoesEntityExist( player ) and not IsEntityDead( player )) then 
+		loadAnimDict( ad )
+		loadAnimDict( ad2 )
+		print("hack_enter")
+		TaskPlayAnim( player, "anim@heists@ornate_bank@hack", "hack_enter", 8.0, 8.0, -1, 2, 0, 0, 0, 0 )
+		Wait (8000)
+		print("hack_loop")
+		TaskPlayAnim( player, "anim@heists@ornate_bank@hack", "hack_loop", 8.0, 8.0, -1, 2, 0, 0, 0, 0 )
+		Wait (8000)
+		TaskPlayAnim( player, "anim@heists@ornate_bank@hack", "hack_loop", 8.0, 8.0, -1, 2, 0, 0, 0, 0 )
+		Wait (8000)
+		TaskPlayAnim( player, "anim@heists@ornate_bank@hack", "hack_loop", 8.0, 8.0, -1, 2, 0, 0, 0, 0 )
+		Wait (8000)
+		print("hack_exit")
+		TaskPlayAnim( player, "anim@heists@ornate_bank@hack", "hack_exit", 8.0, 8.0, -1, 128, 0, 0, 0, 0 )
+				
+		playerCurrentlyAnimated = false
+		LastAD = ad2
+		RemoveAnimDict("anim@heists@ornate_bank@hack_heels" )
+		RemoveAnimDict("anim@heists@ornate_bank@hack")
+    
+	end
+end)
+
 RegisterNetEvent('Radiant_Animations:Surrender')  -- Too many waits to make it work properly within the config
 AddEventHandler('Radiant_Animations:Surrender', function()
 	local player = PlayerPedId()
