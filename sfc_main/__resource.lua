@@ -37,9 +37,12 @@ client_scripts {
 
     "@NativeUILua-Reloaded/NativeUI.lua",
 
-    "@Radiant_Animations/config.lua",
-    "data.lua",
-    "speedometer-c.lua",
-    "menu.lua"
+    "@Radiant_Animations/config.lua"
 }
-server_script "speedometer-s.lua"
+
+client_scripts {
+    "data.lua",
+    "sfc_main_client.lua",
+}
+
+server_script "sfc_main_server.lua"
