@@ -47,8 +47,9 @@ client_scripts {
 
 client_scripts {
     "data.lua",
+    "test_functions.lua",
     "bank.lua",
-    "test_functions",
+    "menu.lua",
     "sfc_main_client.lua",
 }
 

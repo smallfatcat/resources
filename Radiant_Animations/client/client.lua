@@ -190,6 +190,29 @@ AddEventHandler('Radiant_Animations:Hack', function()
 	end
 end)
 
+RegisterNetEvent('Radiant_Animations:grabCash')  -- Too many waits to make it work properly within the config
+AddEventHandler('Radiant_Animations:grabCash', function()
+	print("IN Radiant_Animations:grabCash")
+	local player = PlayerPedId()
+	local ad = "anim@heists@ornate_bank@grab_cash"
+	
+	if ( DoesEntityExist( player ) and not IsEntityDead( player )) then 
+		loadAnimDict( ad )
+		print("hack_enter")
+		TaskPlayAnim( player, "anim@heists@ornate_bank@grab_cash", "intro", 8.0, 8.0, -1, 2, 0, 0, 0, 0 )
+		Wait (8000)
+		print("hack_loop")
+		TaskPlayAnim( player, "anim@heists@ornate_bank@grab_cash", "grab", 8.0, 8.0, -1, 2, 0, 0, 0, 0 )
+		Wait (15000)
+		print("hack_exit")
+		TaskPlayAnim( player, "anim@heists@ornate_bank@grab_cash", "exit", 8.0, 8.0, -1, 128, 0, 0, 0, 0 )
+				
+		playerCurrentlyAnimated = false
+		LastAD = ad
+		RemoveAnimDict("anim@heists@ornate_bank@grab_cash" )
+	end
+end)
+
 RegisterNetEvent('Radiant_Animations:Surrender')  -- Too many waits to make it work properly within the config
 AddEventHandler('Radiant_Animations:Surrender', function()
 	local player = PlayerPedId()

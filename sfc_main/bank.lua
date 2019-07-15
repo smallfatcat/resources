@@ -95,7 +95,7 @@ function hackListener(bankID, doorID, consolePos)
     CreateThread(function()
         while waitingForKeyPress and hackListenerStarted do
             -- draw every frame
-            Draw3DText(consolePos, "Press E to hack")
+            Draw3DText(consolePos, "Press ~r~E ~w~to hack")
             Wait(1)
             if IsControlJustReleased(1, 51) then
                 hackListenerStarted = false

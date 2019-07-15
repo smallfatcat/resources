@@ -1,17 +1,24 @@
+-- Test lua script for FiveM
 print("loaded sfc_main.lua")
 
--- Test lua script for FiveM
-_menuPool = NativeUI.CreatePool()
-mainMenu = NativeUI.CreateMenu("Actions", "~b~Action Menu")
+-- Variables (More set in config.lua)
 
-_menuPool:Add(mainMenu)
+local blip1 = addBlip(v1, 225, "1")
+local blip2 = addBlip(v2, 225, "2")
+local blip3 = addBlip(v3, 225, "3")
+local blip4 = addBlip(v4, 225, "4")
+local blip5 = addBlip(v5, 225, "5")
+local blip6 = addBlip(v5, 225, "5")
+local blipsVisible = true
+
+-- Chat commands
 
 RegisterCommand("freezeDoor", function(source, args)
     FreezeEntityPosition(tonumber(args[1]), true)
 end)
 
 RegisterCommand("animTest", function(source, args)
-    TriggerEvent("Radiant_Animations:Hack")
+    TriggerEvent("Radiant_Animations:grabCash")
 end)
 
 RegisterCommand("unfreezeDoor", function(source, args)
@@ -123,92 +130,6 @@ end)
 -- Functions
 --------------------------------------------------------------------------
 
-function itemMenu(menu)
-    local b = {1,2,3,4}
-    local emoteList = {}
-    for i = 1, #Config.Anims do
-        emoteList[i] = Config.Anims[i].name
-    end
-    local startT  = NativeUI.CreateItem("Start Timer", "~g~start stopwatch")
-    local stopT  = NativeUI.CreateItem("Stop timer", "~g~stop stopwatch")
-    local hideT  = NativeUI.CreateItem("Hide timer", "~g~hide stopwatch")
-    local startST  = NativeUI.CreateItem("Start Speed Timer", "~g~start stopwatch")
-    local click  = NativeUI.CreateItem("Start Fight Club", "~g~make peds fight")
-    local tplist = NativeUI.CreateListItem("Teleport to Bank", b, 1)
-    local openlist = NativeUI.CreateListItem("Open Bank Door", b, 1)
-    local closelist = NativeUI.CreateListItem("Close Bank Door", b, 1)
-    local emotes = NativeUI.CreateListItem("Emote", emoteList, 1)
-    local tppNames = getTPPnames()
-    local tpplist = NativeUI.CreateListItem("Teleport to...", tppNames, 1)
-    
-    menu:AddItem(startT)
-    menu:AddItem(stopT)
-    menu:AddItem(hideT)
-    menu:AddItem(startST)
-    menu:AddItem(click)
-    menu:AddItem(tplist)
-    menu:AddItem(openlist)
-    menu:AddItem(closelist)
-    menu:AddItem(emotes)
-    menu:AddItem(tpplist)
-
-    --menu.MouseControlsEnabled = false
-    menu.OnItemSelect = function(sender, item, index)
-        -- print("debug: in 1:")
-        if item == click then
-            fightclub()
-            notify("~g~Fight Club started")
-        end
-        if item == startT then
-            startTimer()
-        end
-        if item == stopT then
-            stopTimer()
-        end
-        if item == hideT then
-            timerVisible = false
-        end
-        if item == startST then
-            startSpeedTimer()
-        end
-    end
-    menu.OnListSelect = function(sender, item, index)  
-        if item == tplist then
-            local selectedBank = item:IndexToItem(index)
-            tpBank(tonumber(selectedBank))
-            notify("~g~Teleported to bank "..tonumber(selectedBank))
-        end
-        if item == openlist then
-            local selectedBank = item:IndexToItem(index)
-            openBankDoor(tonumber(selectedBank),1)
-            notify("~g~Opened Bank Door "..tonumber(selectedBank))
-        end
-        if item == closelist then
-            local selectedBank = item:IndexToItem(index)
-            closeBankDoor(tonumber(selectedBank),1)
-            notify("~g~Closed Bank Door "..tonumber(selectedBank))
-        end
-        if item == emotes then
-            local emoteName = item:IndexToItem(index)
-            ExecuteCommand("e "..emoteName)
-            notify("~g~Emoted "..emoteName)
-        end
-        if item == tpplist then
-            local name = item:IndexToItem(index)
-            tpSpecial(name)
-            notify("~g~Teleported to "..name)
-        end
-    end
-end
-
-function getTPPnames()
-    local names = {}
-    for _,item in ipairs(tpCoords) do
-        table.insert(names,item.name)
-    end
-    return names
-end
-
 function tpSpecial(name)
     for _,item in pairs(tpCoords) do
         if item.name == name then
@@ -319,60 +240,6 @@ function lineSpawner()
         SetEntityAsMissionEntity(vehicles[i], true, true)
         TriggerEvent("chatMessage", "[SPAWNED]", {0,255,0}, GetVehicleNumberPlateText(vehicles[i]).." "..car.." V: "..vehicles[i])
     end
-end
-
-function addBlip(v, sprite, label)
-    local blip = AddBlipForCoord(v.x, v.y)
-    SetBlipSprite(blip, sprite)
-    SetBlipDisplay(blip, 6)
-    SetBlipScale(blip, 0.9)
-    BeginTextCommandSetBlipName("STRING");
-    AddTextComponentString(label)
-    EndTextCommandSetBlipName(blip)
-    return blip
-end
-
-function text(content) 
-    SetTextFont(4)
-    SetTextProportional(0)
-    SetTextScale(0.5,0.5)
-    SetTextDropshadow(0, 0, 0, 0, 255)
-    SetTextEdge(2, 0, 0, 0, 150)
-    SetTextDropShadow()
-    SetTextOutline()
-    SetTextEntry("STRING")
-    AddTextComponentString(content)
-    DrawText(0.01,0.75)
-end
-
-function bottomText(content) 
-    SetTextFont(4)
-    SetTextProportional(0)
-    SetTextScale(0.5,0.5)
-    SetTextDropshadow(0, 0, 0, 0, 255)
-    SetTextEdge(2, 0, 0, 0, 150)
-    SetTextDropShadow()
-    SetTextOutline()
-    SetTextEntry("STRING")
-    AddTextComponentString(content)
-    DrawText(0.5,0.90)
-end
-
-function Draw3DText(v, text)
-    SetDrawOrigin(v.x, v.y, v.z, 0)
-    SetTextScale(0.0, 0.35)
-    SetTextFont(0)
-    SetTextProportional(1)
-    SetTextColour(255, 255, 255, 255)
-    SetTextDropshadow(0, 0, 0, 0, 255)
-    SetTextEdge(2, 0, 0, 0, 150)
-    SetTextDropShadow()
-    SetTextOutline()
-    SetTextEntry("STRING")
-    SetTextCentre(1)
-    AddTextComponentString(text)
-    DrawText(0, 0)
-    ClearDrawOrigin()
 end
 
 function closestVehicleID()
@@ -517,48 +384,6 @@ function stopSpeedTimer()
     stopTimer()
 end
 
--- Variables (More set in config.lua)
-
-local blip1 = addBlip(v1, 225, "1")
-local blip2 = addBlip(v2, 225, "2")
-local blip3 = addBlip(v3, 225, "3")
-local blip4 = addBlip(v4, 225, "4")
-local blip5 = addBlip(v5, 225, "5")
-local blip6 = addBlip(v5, 225, "5")
-local blipsVisible = true
-
-itemMenu(mainMenu)
-_menuPool:RefreshIndex()
-mainMenu.Settings.MouseControlsEnabled = false
-mainMenu.Settings.MouseEdgeEnabled = false
-mainMenu.Settings.ControlDisablingEnabled = false
-
-_progressBarPool = NativeUI.ProgressBarPool()
-HackingProgressBar = NativeUI.CreateProgressBarItem("Hacking console...")
-_progressBarPool:Add(HackingProgressBar)
-
---[[Citizen.CreateThread(function()
-    while true do
-        Citizen.Wait(1)
-        _progressBarPool:Draw()
-    end
-end)
-
-local Item = NativeUI.CreateProgressBarItem("Testing timer bar...")
-_progressBarPool:Add(Item)
-
-local progress = 0
-Citizen.CreateThread(function()
-    while true do
-        Citizen.Wait(1)
-        if (progress >= 100) then
-            progress = 0
-        else
-            progress = progress + 0.1
-        end
-        Item:SetPercentage(progress)
-    end
-end)--]]
 
 -- Threads
 ---------------------------------------------------------------------------
@@ -593,7 +418,7 @@ end)
 
 -- Menu Activation Thread
 Citizen.CreateThread(function()
-    --print("debug: menu")
+    print("debug: menu")
     while true do
         Citizen.Wait(1)
         _menuPool:ProcessMenus()
