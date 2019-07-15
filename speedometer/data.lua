@@ -2,6 +2,7 @@
 --------------------------------------------------------------------------
 
 DEBUG_DISPLAY = true
+DEBUG_OBJECT = false
 
 limitBottom = 1.0
 limitTop = 100.0
@@ -42,9 +43,10 @@ controlPanel2 = vector3(-2956.500, 482.063, 15.897)
 controlPanel3 = vector3(-104.604, 6473.443, 31.795)
 controlPanel4 = vector3(1175.542, 2710.861, 38.226)
 --print("Debug:"..bankDoors[2].open)
-carNames = {"jester2","cheetah","zentorno","infernus","comet3", "carbonizzare", "autarch", "bullet", "scramjet", "dodo"}
+carNames = {"jester2","cheetah","zentorno","infernus","comet2", "carbonizzare", "autarch", "bullet", "scramjet", "dodo"}
 
 tpCoords = {
+		{name = "Morgue", coords = vector3(275.446, -1361.11, 24.5378)},
 		{name = "Pillbox", coords = vector3(291.168,-582.725,43.166)},
     {name = "Michael", coords = vector3(-802.311, 175.056, 72.8446)},
     {name = "Simeon", coords = vector3(-47.16170, -1115.3327, 26.5)},
@@ -79,32 +81,48 @@ tpCoords = {
     {name = "Doomsday Submarine", coords = vector3(514.29266357422, 4885.8706054688, -62.589862823486)},
 }
 
---[[banksObject = {
-	1 = {
+banksObject = {
+	{
 		id = 1,
 		pos = vector3(255.51, 226.60, 101.87),
-		name = "bank1",
+		name = "Pacific Standard, Vinewood Boulevard",
 		state = {
 			robbable = true,
 			cash = 50000
 		},
-		doors = {
-			id = 1,
-			type = "vault",
-			locked = true,
-			pos = vector3(255.228, 223.976, 102.393),
-			heading_open = 10.0,
-			heading_closed = 160.0
+		doors = { 
+			{
+				id = 1,
+				type = "vault",
+				locked = true,
+				pos = vector3(255.228, 223.976, 102.393),
+				heading_open = 10.0,
+				heading_closed = 160.0
+			},
+			{
+				id = 2,
+				type = "gate",
+				locked = true,
+				pos = vector3(262.198, 222.518, 106.429),
+				heading_open = 160.0,
+				heading_closed = 250.289
+			}
 		},
 		consoles = {
-			id = 1,
-			pos = vector3(252.916, 228.527, 102.088)
+			{
+				id = 1,
+				pos = vector3(252.916, 228.527, 102.088)
+			},
+			{
+				id = 2,
+				pos = vector3(262.218, 223.046, 106.641)
+			}
 		}
 	},
-	2 = {
+	{
 		id = 2,
 		pos = vector3(-2957.44, 480.30, 15.70),
-		name = "bank2",
+		name = "Fleeca Bank, Great Ocean Highway",
 		state = {
 			robbable = true,
 			cash = 50000
@@ -118,8 +136,56 @@ tpCoords = {
 			heading_closed = 357.542
 		},
 		consoles = {
+			{
+				id = 1,
+				pos = vector3(-2956.500, 482.063, 15.897)
+			},
+		}
+	},
+	{
+		id = 3,
+		pos = vector3(-104.17, 6470.57, 31.62),
+		name = "Blaine County Savings Bank, Paleto Bay",
+		state = {
+			robbable = true,
+			cash = 50000
+		},
+		doors = {
 			id = 1,
-			pos = vector3(-2956.500, 482.063, 15.897)
+			type = "vault",
+			locked = true,
+			pos = vector3(-104.604, 6473.443, 31.795),
+			heading_open = 150.0,
+			heading_closed = 45.0
+		},
+		consoles = {
+			{
+				id = 1,
+				pos = vector3(-105.500, 6471.895, 31.795)
+			}
+		}
+	},
+	{
+		id = 4,
+		pos = vector3(-104.17, 6470.57, 31.62),
+		name = "Fleeca Bank, Route 68",
+		state = {
+			robbable = true,
+			cash = 50000
+		},
+		doors = {
+			id = 1,
+			type = "vault",
+			locked = true,
+			pos = vector3(1175.542, 2710.861, 38.226),
+			heading_open = 150.0,
+			heading_closed = 45.0
+		},
+		consoles = {
+			{
+				id = 1,
+				pos = vector3(1175.976, 2712.889, 38.226)
+			}
 		}
 	}
-}--]]
+}

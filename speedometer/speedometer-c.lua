@@ -17,6 +17,14 @@ AddEventHandler('BankDoor:CloseClient', function(doorID)
     changeDoorHeading(doorID, bankDoors[tonumber(doorID)].closed)
 end)
 
+RegisterCommand("freezeDoor", function(source, args)
+    FreezeEntityPosition(tonumber(args[1]), true)
+end)
+
+RegisterCommand("unfreezeDoor", function(source, args)
+    FreezeEntityPosition(tonumber(args[1]), false)
+end)
+
 RegisterCommand("debugDisplay", function(source, args)
     --print("Debug"..args[1])
     if args[1] ~= nil then
@@ -578,6 +586,19 @@ function stopSpeedTimer()
     stopTimer()
 end
 
+function detectConsole()
+    for bankID = 1, #banksObject do
+        local bank = banksObject[bankID]
+        for consoleID = 1, #bank.consoles do
+            --print("bankID:"..bankID.." consoleID:"..consoleID.."#banksObject"..#banksObject)
+            if Vdist2(bank.consoles[consoleID].pos, GetEntityCoords(GetPlayerPed(-1))) < 4 then
+                return true, bank.consoles[consoleID].pos
+            end
+        end
+    end
+    return false, vector3(0,0,0)
+end
+
 -- Variables (More set in config.lua)
 
 local blip1 = addBlip(v1, 225, "1")
@@ -654,9 +675,11 @@ Citizen.CreateThread(function()
             local rpm  = GetVehicleCurrentRpm(vehicle)
             --local accel = GetVehicleCurrentAcceleration(vehicle)
             local maxV = GetVehicleHandlingInt(vehicle, 'CHandlingData', 'fInitialDriveMaxFlatVel')
-            local driveF = GetVehicleHandlingInt(vehicle, 'CHandlingData', 'fEngineDamageMult')
+            local driveF = GetVehicleHandlingFloat(vehicle, 'CHandlingData', 'fInitialDriveForce')
+            driveF = math.floor(driveF*100) / 100
+            --print(driveF)
             local health = GetVehicleEngineHealth(vehicle)
-            SetVehicleEnginePowerMultiplier(vehicle , 10.0)
+            SetVehicleEnginePowerMultiplier(vehicle , 50.0)
                     
             --text(math.floor(speed) .. " MPH ")
             text(
@@ -669,6 +692,8 @@ Citizen.CreateThread(function()
                 .. math.floor(rpm*8000) 
                 .. " - MaxV " 
                 .. maxV
+                .. " - DF " 
+                .. driveF
                 .. " - health " 
                 .. health
             )
@@ -691,13 +716,18 @@ Citizen.CreateThread(function()
                 if peds ~= nil and peds[1] ~= nil and peds[2] ~= nil then
                     closestPed = peds[1][1]
                     secondClosest = peds[2][1]
-                    --closestObject = closestObjectID()
+                    if DEBUG_OBJECT then
+                        closestObject = closestObjectID()
+                    end
                 else
                     closestPed = 0
                     secondClosest = 0
                 end
             end
-            --local headingObject = GetEntityPhysicsHeading(closestObject)
+            local headingObject
+            if DEBUG_OBJECT then
+                headingObject = GetEntityPhysicsHeading(closestObject)
+            end
             --local pedGroup = GetPedGroupIndex(closestPed)
             --local groupHash = GetPedRelationshipGroupHash(closestPed)
             distToDeadPed = GetDistanceBetweenCoords(GetEntityCoords(deadPed), GetEntityCoords(GetPlayerPed(-1)), true)
@@ -706,7 +736,13 @@ Citizen.CreateThread(function()
             if distToDeadPed < 200.0 then
                 Draw3DText(GetEntityCoords(deadPed), "Dead Ped "..GetEntityHealth(deadPed).." "..tostring(math.floor(distToDeadPed)))
             end
-            --Draw3DText(GetEntityCoords(closestObject), "Object "..closestObject.." "..headingObject)
+            if DEBUG_OBJECT then
+                Draw3DText(GetEntityCoords(closestObject), "Object "..closestObject.." "..headingObject)
+            end
+            local consoleDetected, consolePos = detectConsole()
+            if consoleDetected then
+                Draw3DText(consolePos, "Console")
+            end
         end
         threadFrame = threadFrame + 1
         if threadFrame >= threadLimit then
@@ -749,7 +785,7 @@ CreateThread(function()
 end)
 
 -- AI Density Thread
-DensityMultiplier = 0.9
+DensityMultiplier = 0.2
 Citizen.CreateThread(function()
     while true do
         Citizen.Wait(0)
