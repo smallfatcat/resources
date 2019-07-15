@@ -1,9 +1,9 @@
 RegisterServerEvent('BankDoor:OpenServer')
-AddEventHandler('BankDoor:OpenServer', function(doorID)
-	TriggerClientEvent('BankDoor:OpenClient', -1, doorID)
+AddEventHandler('BankDoor:OpenServer', function(bankID, doorID)
+	TriggerClientEvent('BankDoor:OpenClient', -1, bankID, doorID)
 end)
 
 RegisterServerEvent('BankDoor:CloseServer')
-AddEventHandler('BankDoor:CloseServer', function(doorID)
-	TriggerClientEvent('BankDoor:CloseClient', -1, doorID)
+AddEventHandler('BankDoor:CloseServer', function(bankID, doorID)
+	TriggerClientEvent('BankDoor:CloseClient', -1, bankID, doorID)
 end)

@@ -41,6 +41,11 @@ client_scripts {
 }
 
 client_scripts {
+    "@NativeUILua-Reloaded/UIProgressBar/UIProgressBarPool.lua",
+    "@NativeUILua-Reloaded/UIProgressBar/items/UIProgressBarItem.lua",
+}
+
+client_scripts {
     "data.lua",
     "sfc_main_client.lua",
 }

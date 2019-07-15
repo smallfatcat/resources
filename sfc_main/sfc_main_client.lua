@@ -5,16 +5,17 @@ mainMenu = NativeUI.CreateMenu("Actions", "~b~Action Menu")
 _menuPool:Add(mainMenu)
 
 RegisterNetEvent('BankDoor:OpenClient')
-AddEventHandler('BankDoor:OpenClient', function(doorID)
+AddEventHandler('BankDoor:OpenClient', function(bankID, doorID)
     print("Door opened: "..doorID)
-    --print("Debug2:"..bankDoors[2].open)
-    changeDoorHeading(doorID, bankDoors[tonumber(doorID)].open)
+    print("bankID"..bankID.."doorID"..doorID)
+    changeDoorHeading(bankID, doorID, "open")
 end)
 
 RegisterNetEvent('BankDoor:CloseClient')
-AddEventHandler('BankDoor:CloseClient', function(doorID)
+AddEventHandler('BankDoor:CloseClient', function(bankID, doorID)
     print("Door closed: "..doorID)
-    changeDoorHeading(doorID, bankDoors[tonumber(doorID)].closed)
+    print("bankID"..bankID.."doorID"..doorID)
+    changeDoorHeading(bankID, doorID, "close")
 end)
 
 RegisterCommand("freezeDoor", function(source, args)
@@ -45,17 +46,19 @@ RegisterCommand("debugDisplay", function(source, args)
 end)
 
 RegisterCommand("bo", function(source, args)
-    local doorID = args[1]
+    local bankID = args[1]
+    local doorID = args[2]
     --local doorID = closestObjectIDtoCoords(bankDoors[doorID].pos)
     --openBankDoor(doorID)
-    TriggerServerEvent("BankDoor:OpenServer", doorID)
+    TriggerServerEvent("BankDoor:OpenServer", bankID, doorID)
 end)
 
 RegisterCommand("bc", function(source, args)
-    local doorID = args[1]
+    local bankID = args[1]
+    local doorID = args[2]
     --local doorID = closestObjectIDtoCoords(bankDoors[i].pos)
     --closeBankDoor(doorID)
-    TriggerServerEvent("BankDoor:CloseServer", doorID)
+    TriggerServerEvent("BankDoor:CloseServer", bankID, doorID)
 end)
 
 RegisterCommand("posObject", function(source)
@@ -205,12 +208,12 @@ function itemMenu(menu)
         end
         if item == openlist then
             local selectedBank = item:IndexToItem(index)
-            openBankDoor(tonumber(selectedBank))
+            openBankDoor(tonumber(selectedBank),1)
             notify("~g~Opened Bank Door "..tonumber(selectedBank))
         end
         if item == closelist then
             local selectedBank = item:IndexToItem(index)
-            closeBankDoor(tonumber(selectedBank))
+            closeBankDoor(tonumber(selectedBank),1)
             notify("~g~Closed Bank Door "..tonumber(selectedBank))
         end
         if item == emotes then
@@ -234,19 +237,27 @@ function getTPPnames()
     return names
 end
 
-function closeBankDoor(doorID)
-    TriggerServerEvent("BankDoor:CloseServer", doorID)
+function closeBankDoor(bankID, doorID)
+    TriggerServerEvent("BankDoor:CloseServer", bankID, doorID)
 end
 
-function openBankDoor(doorID)
-    TriggerServerEvent("BankDoor:OpenServer", doorID)
+function openBankDoor(bankID, doorID)
+    TriggerServerEvent("BankDoor:OpenServer", bankID, doorID)
 end
 
-function changeDoorHeading(doorID, heading)
-    bankDoorID = closestObjectIDtoCoords(bankDoors[tonumber(doorID)].pos)
+function changeDoorHeading(bankID, doorID, action)
+    local doorCoords = banksObject[bankID].doors[doorID].pos
+    local newHeading
+    if action == "open" then
+        newHeading = banksObject[bankID].doors[doorID].heading_open
+    else
+        newHeading = banksObject[bankID].doors[doorID].heading_closed
+    end
+    bankDoorID = closestObjectIDtoCoords(doorCoords)
     SetEntityCanBeDamaged(bankDoorID, false)
     NetworkRequestControlOfEntity(bankDoorID)
-    SetEntityHeading(bankDoorID, tonumber(heading))
+    SetEntityHeading(bankDoorID, tonumber(newHeading))
+    print("bankID"..bankID.."doorID"..doorID.."action"..action.."newHeading"..newHeading)
 end
 
 function tpBank(bankID)
@@ -614,6 +625,30 @@ _menuPool:RefreshIndex()
 mainMenu.Settings.MouseControlsEnabled = false
 mainMenu.Settings.MouseEdgeEnabled = false
 mainMenu.Settings.ControlDisablingEnabled = false
+
+local _progressBarPool = NativeUI.ProgressBarPool()
+
+Citizen.CreateThread(function()
+    while true do
+        Citizen.Wait(1)
+        _progressBarPool:Draw()
+    end
+end)
+
+local Item = NativeUI.CreateProgressBarItem("Testing timer bar...")
+_progressBarPool:Add(Item)
+local progress = 0
+Citizen.CreateThread(function()
+    while true do
+        Citizen.Wait(1)
+        if (progress >= 100) then
+            progress = 0
+        else
+            progress = progress + 0.1
+        end
+        Item:SetPercentage(progress)
+    end
+end)
 
 -- Threads
 ---------------------------------------------------------------------------

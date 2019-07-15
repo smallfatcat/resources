@@ -101,8 +101,8 @@ banksObject = {
 		pos = vector3(-2957.44, 480.30, 15.70),
 		name = "Fleeca Bank, Great Ocean Highway",
 		state = {robbable = true,	cash = 50000},
-		doors = {{
-			id = 1, type = "vault", locked = true,	pos = vector3(-2958.538, 482.270, 15.835), heading_open = 270.0, heading_closed = 357.542},
+		doors = {
+			{id = 1, type = "vault", locked = true,	pos = vector3(-2958.538, 482.270, 15.835), heading_open = 270.0, heading_closed = 357.542},
 		},
 		consoles = {
 			{id = 1, pos = vector3(-2956.500, 482.063, 15.897)}
@@ -126,7 +126,7 @@ banksObject = {
 		name = "Fleeca Bank, Route 68",	
 		state = {	robbable = true, cash = 50000},
 		doors = {
-			{id = 1, type = "vault", locked = true,	pos = vector3(1175.542, 2710.861, 38.226), heading_open = 150.0, heading_closed = 45.0},
+			{id = 1, type = "vault", locked = true,	pos = vector3(1175.542, 2710.861, 38.226), heading_open = 0.0, heading_closed = 90.0},
 		},
 		consoles = {
 			{id = 1,	pos = vector3(1175.976, 2712.889, 38.226)}
