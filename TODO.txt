@@ -1,5 +1,6 @@
 bank job
-	trigger point for door locks
+	server side lock status
+	update door based on lock status and proximity
 	hacking game
 	explosive entry
 	police notification
