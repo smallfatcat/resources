@@ -3,8 +3,8 @@ print("loaded data.lua")
 -- Variables
 --------------------------------------------------------------------------
 
-DEBUG_DISPLAY = false
-DEBUG_OBJECT = false
+DEBUG_DISPLAY = true
+DEBUG_OBJECT = true
 
 hackListenerStarted = false
 

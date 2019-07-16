@@ -200,13 +200,16 @@ AddEventHandler('Radiant_Animations:grabCash', function()
 		loadAnimDict( ad )
 		print("hack_enter")
 		TaskPlayAnim( player, "anim@heists@ornate_bank@grab_cash", "intro", 8.0, 8.0, -1, 2, 0, 0, 0, 0 )
+		--TaskPlayAnim( player, "anim@heists@ornate_bank@grab_cash", "bag_intro", 8.0, 8.0, -1, 2, 0, 0, 0, 0 )
 		Wait (8000)
 		print("hack_loop")
 		TaskPlayAnim( player, "anim@heists@ornate_bank@grab_cash", "grab", 8.0, 8.0, -1, 2, 0, 0, 0, 0 )
+		--TaskPlayAnim( player, "anim@heists@ornate_bank@grab_cash", "bag_grab", 8.0, 8.0, -1, 2, 0, 0, 0, 0 )
 		Wait (15000)
 		print("hack_exit")
 		TaskPlayAnim( player, "anim@heists@ornate_bank@grab_cash", "exit", 8.0, 8.0, -1, 128, 0, 0, 0, 0 )
-				
+		--TaskPlayAnim( player, "anim@heists@ornate_bank@grab_cash", "bag_exit", 8.0, 8.0, -1, 128, 0, 0, 0, 0 )
+			
 		playerCurrentlyAnimated = false
 		LastAD = ad
 		RemoveAnimDict("anim@heists@ornate_bank@grab_cash" )

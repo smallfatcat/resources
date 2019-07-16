@@ -423,10 +423,11 @@ Citizen.CreateThread(function()
         Citizen.Wait(1)
         _menuPool:ProcessMenus()
         --[[ The "z" button will activate the menu ]]
-        if IsControlJustReleased(1, 48) then
-            --print("debug: "..tostring(mainMenu.MouseControlsEnabled))
+        if IsControlJustReleased(1, 48) then -- 48 is Z
             mainMenu:Visible(not mainMenu:Visible())
-            --print("debug: menu")
+        end
+        if IsControlJustReleased(1, 19) then -- 19 is LEFT ALT
+            clothesMenu:Visible(not clothesMenu:Visible())
         end
     end
 end)

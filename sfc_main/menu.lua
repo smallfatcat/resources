@@ -84,18 +84,122 @@ function itemMenu(menu)
     end
 end
 
-function clothesMenuFunc(menu)
-    local component0 = getComponentArray(46)
-    local comp0 = NativeUI.CreateListItem("comp0", component0, 1)
-    menu:AddItem(comp0)
-end
-
 function getComponentArray(num)
     local retValue = {}
     for i = 0, (num-1) do
-        retValue[i] = i
+        retValue[i+1] = i
+    end
+    return retValue
+end
+
+function clothesMenuFunc(menu)
+    local component0 = getComponentArray(46)
+    local component1 = getComponentArray(148)
+    local component2 = getComponentArray(74)
+    local component3 = getComponentArray(168)
+    local component4 = getComponentArray(115)
+    local component5 = getComponentArray(81)
+    local component6 = getComponentArray(91)
+    local component7 = getComponentArray(132)
+    local component8 = getComponentArray(144)
+    local component9 = getComponentArray(38)
+    local component10 = getComponentArray(62)
+    local component11 = getComponentArray(290)
+    local comp0 = NativeUI.CreateListItem("Head", component0, 1)
+    local comp1 = NativeUI.CreateListItem("Mask", component1, 1)
+    local comp2 = NativeUI.CreateListItem("Hair", component2, 1)
+    local comp3 = NativeUI.CreateListItem("Arms", component3, 1)
+    local comp4 = NativeUI.CreateListItem("Legs", component4, 1)
+    local comp5 = NativeUI.CreateListItem("Bags & Parachutes", component5, 1)
+    local comp6 = NativeUI.CreateListItem("Shoes", component6, 1)
+    local comp7 = NativeUI.CreateListItem("comp7", component7, 1)
+    local comp8 = NativeUI.CreateListItem("Undershirt", component8, 1)
+    local comp9 = NativeUI.CreateListItem("Armour", component9, 1)
+    local comp10 = NativeUI.CreateListItem("Decals", component10, 1)
+    local comp11 = NativeUI.CreateListItem("Shirt", component11, 1)
+    
+    menu:AddItem(comp0)
+    menu:AddItem(comp1)
+    menu:AddItem(comp2)
+    menu:AddItem(comp3)
+    menu:AddItem(comp4)
+    menu:AddItem(comp5)
+    menu:AddItem(comp6)
+    menu:AddItem(comp7)
+    menu:AddItem(comp8)
+    menu:AddItem(comp9)
+    menu:AddItem(comp10)
+    menu:AddItem(comp11)
+
+    local ped = GetPlayerPed(-1)
+    local textureId = 0
+    local paletteId = 0
+    
+    menu.OnListSelect = function(sender, item, index)
+        if item == comp0 then
+            local selectedComponent = item:IndexToItem(index)
+            SetPedComponentVariation(ped, componentId, drawableId, textureId, paletteId)
+            SetPedComponentVariation(ped, 0, selectedComponent, textureId, paletteId)
+        end
+        if item == comp1 then
+            local selectedComponent = item:IndexToItem(index)
+            SetPedComponentVariation(ped, componentId, drawableId, textureId, paletteId)
+            SetPedComponentVariation(ped, 1, selectedComponent, textureId, paletteId)
+        end
+        if item == comp2 then
+            local selectedComponent = item:IndexToItem(index)
+            SetPedComponentVariation(ped, componentId, drawableId, textureId, paletteId)
+            SetPedComponentVariation(ped, 2, selectedComponent, textureId, paletteId)
+        end
+        if item == comp3 then
+            local selectedComponent = item:IndexToItem(index)
+            SetPedComponentVariation(ped, componentId, drawableId, textureId, paletteId)
+            SetPedComponentVariation(ped, 3, selectedComponent, textureId, paletteId)
+        end
+        if item == comp4 then
+            local selectedComponent = item:IndexToItem(index)
+            SetPedComponentVariation(ped, componentId, drawableId, textureId, paletteId)
+            SetPedComponentVariation(ped, 4, selectedComponent, textureId, paletteId)
+        end
+        if item == comp5 then
+            local selectedComponent = item:IndexToItem(index)
+            SetPedComponentVariation(ped, componentId, drawableId, textureId, paletteId)
+            SetPedComponentVariation(ped, 5, selectedComponent, textureId, paletteId)
+        end
+        if item == comp6 then
+            local selectedComponent = item:IndexToItem(index)
+            SetPedComponentVariation(ped, componentId, drawableId, textureId, paletteId)
+            SetPedComponentVariation(ped, 6, selectedComponent, textureId, paletteId)
+        end
+        if item == comp7 then
+            local selectedComponent = item:IndexToItem(index)
+            SetPedComponentVariation(ped, componentId, drawableId, textureId, paletteId)
+            SetPedComponentVariation(ped, 7, selectedComponent, textureId, paletteId)
+        end
+        if item == comp8 then
+            local selectedComponent = item:IndexToItem(index)
+            SetPedComponentVariation(ped, componentId, drawableId, textureId, paletteId)
+            SetPedComponentVariation(ped, 8, selectedComponent, textureId, paletteId)
+        end
+        if item == comp9 then
+            local selectedComponent = item:IndexToItem(index)
+            SetPedComponentVariation(ped, componentId, drawableId, textureId, paletteId)
+            SetPedComponentVariation(ped, 9, selectedComponent, textureId, paletteId)
+        end
+        if item == comp10 then
+            local selectedComponent = item:IndexToItem(index)
+            SetPedComponentVariation(ped, componentId, drawableId, textureId, paletteId)
+            SetPedComponentVariation(ped, 10, selectedComponent, textureId, paletteId)
+        end
+        if item == comp11 then
+            local selectedComponent = item:IndexToItem(index)
+            SetPedComponentVariation(ped, componentId, drawableId, textureId, paletteId)
+            SetPedComponentVariation(ped, 11, selectedComponent, textureId, paletteId)
+        end
     end
 end
+
+
 
 _menuPool = NativeUI.CreatePool()
 mainMenu = NativeUI.CreateMenu("Actions", "~b~Action Menu")
