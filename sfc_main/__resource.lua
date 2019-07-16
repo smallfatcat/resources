@@ -1,7 +1,7 @@
 resource_manifest_version '44febabe-d386-4d18-afbe-5e627f4af937'
 
 client_scripts {
-		"@NativeUILua-Reloaded/Wrapper/Utility.lua",
+	"@NativeUILua-Reloaded/Wrapper/Utility.lua",
 
     "@NativeUILua-Reloaded/UIElements/UIVisual.lua",
     "@NativeUILua-Reloaded/UIElements/UIResRectangle.lua",
@@ -36,8 +36,6 @@ client_scripts {
     "@NativeUILua-Reloaded/UIMenu/MenuPool.lua",
 
     "@NativeUILua-Reloaded/NativeUI.lua",
-
-    "@Radiant_Animations/config.lua"
 }
 
 client_scripts {
@@ -46,7 +44,11 @@ client_scripts {
 }
 
 client_scripts {
-    "data.lua",
+    "@Radiant_Animations/config.lua"
+}
+
+client_scripts {
+    "sfc_config.lua",
     "test_functions.lua",
     "bank.lua",
     "menu.lua",

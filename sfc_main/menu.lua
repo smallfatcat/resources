@@ -138,62 +138,50 @@ function clothesMenuFunc(menu)
     menu.OnListSelect = function(sender, item, index)
         if item == comp0 then
             local selectedComponent = item:IndexToItem(index)
-            SetPedComponentVariation(ped, componentId, drawableId, textureId, paletteId)
             SetPedComponentVariation(ped, 0, selectedComponent, textureId, paletteId)
         end
         if item == comp1 then
             local selectedComponent = item:IndexToItem(index)
-            SetPedComponentVariation(ped, componentId, drawableId, textureId, paletteId)
             SetPedComponentVariation(ped, 1, selectedComponent, textureId, paletteId)
         end
         if item == comp2 then
             local selectedComponent = item:IndexToItem(index)
-            SetPedComponentVariation(ped, componentId, drawableId, textureId, paletteId)
             SetPedComponentVariation(ped, 2, selectedComponent, textureId, paletteId)
         end
         if item == comp3 then
             local selectedComponent = item:IndexToItem(index)
-            SetPedComponentVariation(ped, componentId, drawableId, textureId, paletteId)
             SetPedComponentVariation(ped, 3, selectedComponent, textureId, paletteId)
         end
         if item == comp4 then
             local selectedComponent = item:IndexToItem(index)
-            SetPedComponentVariation(ped, componentId, drawableId, textureId, paletteId)
             SetPedComponentVariation(ped, 4, selectedComponent, textureId, paletteId)
         end
         if item == comp5 then
             local selectedComponent = item:IndexToItem(index)
-            SetPedComponentVariation(ped, componentId, drawableId, textureId, paletteId)
             SetPedComponentVariation(ped, 5, selectedComponent, textureId, paletteId)
         end
         if item == comp6 then
             local selectedComponent = item:IndexToItem(index)
-            SetPedComponentVariation(ped, componentId, drawableId, textureId, paletteId)
             SetPedComponentVariation(ped, 6, selectedComponent, textureId, paletteId)
         end
         if item == comp7 then
             local selectedComponent = item:IndexToItem(index)
-            SetPedComponentVariation(ped, componentId, drawableId, textureId, paletteId)
             SetPedComponentVariation(ped, 7, selectedComponent, textureId, paletteId)
         end
         if item == comp8 then
             local selectedComponent = item:IndexToItem(index)
-            SetPedComponentVariation(ped, componentId, drawableId, textureId, paletteId)
             SetPedComponentVariation(ped, 8, selectedComponent, textureId, paletteId)
         end
         if item == comp9 then
             local selectedComponent = item:IndexToItem(index)
-            SetPedComponentVariation(ped, componentId, drawableId, textureId, paletteId)
             SetPedComponentVariation(ped, 9, selectedComponent, textureId, paletteId)
         end
         if item == comp10 then
             local selectedComponent = item:IndexToItem(index)
-            SetPedComponentVariation(ped, componentId, drawableId, textureId, paletteId)
             SetPedComponentVariation(ped, 10, selectedComponent, textureId, paletteId)
         end
         if item == comp11 then
             local selectedComponent = item:IndexToItem(index)
-            SetPedComponentVariation(ped, componentId, drawableId, textureId, paletteId)
             SetPedComponentVariation(ped, 11, selectedComponent, textureId, paletteId)
         end
     end
