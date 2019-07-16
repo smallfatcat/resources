@@ -1,17 +1,19 @@
 print("loaded bank.lua")
 
 RegisterNetEvent('BankDoor:OpenClient')
-AddEventHandler('BankDoor:OpenClient', function(bankID, doorID)
+AddEventHandler('BankDoor:OpenClient', function(bankID, doorID, lockedStatus)
     print("Door opened: "..doorID)
     print("bankID"..bankID.."doorID"..doorID)
     changeDoorHeading(bankID, doorID, "open")
+    updateLockedStatus(bankID, doorID, lockedStatus)
 end)
 
 RegisterNetEvent('BankDoor:CloseClient')
-AddEventHandler('BankDoor:CloseClient', function(bankID, doorID)
-    print("Door closed: "..doorID)
-    print("bankID"..bankID.."doorID"..doorID)
+AddEventHandler('BankDoor:CloseClient', function(bankID, doorID, lockedStatus)
+    --print("Door closed: "..doorID)
+    --print("bankID"..bankID.."doorID"..doorID)
     changeDoorHeading(bankID, doorID, "close")
+    updateLockedStatus(bankID, doorID, lockedStatus)
 end)
 
 RegisterCommand("hack", function(source, args)
@@ -47,6 +49,10 @@ RegisterCommand("tpb", function(source, args)
     tpBank(tonumber(args[1]))
 end)
 
+function updateLockedStatus(bankID, doorID, lockedStatus)
+    banksObject[bankID].doors[doorID].locked =  lockedStatus
+end
+
 function hackConsole(bankID, doorID)
     TriggerEvent("Radiant_Animations:Hack")
     local progress = 0
@@ -65,6 +71,32 @@ function hackConsole(bankID, doorID)
             HackingProgressBar:SetPercentage(progress)
         end
     end)
+end
+
+function checkAllBankDoors()
+    for bankID = 1, #banksObject do
+        local bank = banksObject[bankID]
+        for doorID = 1, #bank.doors do
+            if IsDoorInRangeOfPlayer(bankID, doorID) then
+                if banksObject[bankID].doors[doorID].locked then
+                    TriggerEvent('BankDoor:CloseClient', bankID, doorID, true)
+                else
+                    TriggerEvent('BankDoor:OpenClient', bankID, doorID, false)
+                end
+            end
+        end
+    end
+end
+
+function IsDoorInRangeOfPlayer(bankID, doorID)
+    local doorPos = banksObject[bankID].doors[doorID].pos
+    local playerPos = GetEntityCoords(GetPlayerPed(-1))
+    if Vdist2(doorPos, playerPos) < 400 then
+        --print("Door in range, BankID: "..bankID.." doorID"..doorID)
+        return true
+    else
+        return false
+    end
 end
 
 function detectConsole()
@@ -120,7 +152,7 @@ function changeDoorHeading(bankID, doorID, action)
     SetEntityCanBeDamaged(bankDoorID, false)
     NetworkRequestControlOfEntity(bankDoorID)
     SetEntityHeading(bankDoorID, tonumber(newHeading))
-    print("bankID"..bankID.."doorID"..doorID.."action"..action.."newHeading"..newHeading)
+    --print("bankID"..bankID.."doorID"..doorID.."action"..action.."newHeading"..newHeading)
 end
 
 function tpBank(bankID)
@@ -144,6 +176,14 @@ CreateThread(function()
         else
             hackListenerStarted = false
         end
+    end
+end)
+
+-- Door Check thread
+CreateThread(function()
+    while true do
+        Wait(1000)
+        checkAllBankDoors()
     end
 end)
 

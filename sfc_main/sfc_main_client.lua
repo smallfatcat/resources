@@ -421,16 +421,28 @@ Citizen.CreateThread(function()
     print("debug: menu")
     while true do
         Citizen.Wait(1)
-        _menuPool:ProcessMenus()
-        --[[ The "z" button will activate the menu ]]
+        _menuPool:ProcessMenus(callCount)
         if IsControlJustReleased(1, 48) then -- 48 is Z
             mainMenu:Visible(not mainMenu:Visible())
+            if clothesMenu:Visible() then
+                clothesMenu:Visible(false)
+            end
         end
         if IsControlJustReleased(1, 19) then -- 19 is LEFT ALT
             clothesMenu:Visible(not clothesMenu:Visible())
+            if mainMenu:Visible() then
+                mainMenu:Visible(false)
+            end
         end
     end
 end)
+
+--[[Citizen.CreateThread(function()
+    while true do
+        Citizen.Wait(100)
+        _menuPool:ProcessMenus()
+    end
+end)--]]
 
 -- Vehicle Hud Thread
 Citizen.CreateThread(function()

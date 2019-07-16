@@ -55,4 +55,7 @@ client_scripts {
     "sfc_main_client.lua",
 }
 
-server_script "sfc_main_server.lua"
+server_scripts{
+    "sfc_config_server.lua",
+    "sfc_main_server.lua"
+}

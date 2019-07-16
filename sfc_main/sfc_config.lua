@@ -1,10 +1,10 @@
-print("loaded data.lua")
+print("loaded sfc_config.lua")
 
 -- Variables
 --------------------------------------------------------------------------
 
-DEBUG_DISPLAY = true
-DEBUG_OBJECT = true
+DEBUG_DISPLAY = false
+DEBUG_OBJECT = false
 
 hackListenerStarted = false
 

@@ -21,7 +21,6 @@ RegisterCommand("setSkin", function(source, args)
     setSkin(skin)
 end)
 
-
 function setSkin(skin)
     Citizen.CreateThread(function()
         local model = GetHashKey(skin)
