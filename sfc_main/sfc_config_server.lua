@@ -7,7 +7,9 @@ banksObject = {
 		doors = { 
 			{id = 1, type = "vault", locked = true,	pos = vector3(255.228, 223.976, 102.393),	heading_open = 10.0, heading_closed = 160.0},
 			{id = 2, type = "gate",	locked = true, pos = vector3(262.198, 222.518, 106.429), heading_open = 160.0, heading_closed = 250.289},
-			{id = 3, type = "gate",	locked = true, pos = vector3(256.311, 220.657, 106.429), heading_open = 50.0, heading_closed = 340.279}
+			{id = 3, type = "gate",	locked = true, pos = vector3(256.311, 220.657, 106.429), heading_open = 50.0, heading_closed = 340.279},
+			{id = 4, type = "gate",	locked = true, pos = vector3(251.857, 221.065, 101.832), heading_open = 80.0, heading_closed = 160.288},
+			{id = 5, type = "gate",	locked = true, pos = vector3(261.300, 214.505, 101.832), heading_open = 175.0, heading_closed = 249.788},
 		},
 		consoles = {
 			{id = 1, pos = vector3(252.916, 228.527, 102.088)},
@@ -17,6 +19,8 @@ banksObject = {
 			{id = 1, pos = vector3(255.228, 223.976, 102.393)},
 			{id = 2, pos = vector3(261.789, 221.368, 106.329)},
 			{id = 3, pos = vector3(257.460, 220.257, 106.329)},
+			{id = 4, pos = vector3(251.857, 221.065, 101.832)},
+			{id = 5, pos = vector3(261.300, 214.505, 101.832)},
 		}
 	},
 	{

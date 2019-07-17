@@ -110,7 +110,7 @@ function thermLock(bankID, doorID)
                 emoteRunning = false
             end
 
-            if (timeThermalHasBeenRunning >= 50000) then
+            if (timeThermalHasBeenRunning >= 57000) then
                 thermIsRunning = false
                 TriggerServerEvent("BankDoor:OpenServer", bankID, doorID)
                 print("Thermite finished")
