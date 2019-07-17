@@ -423,15 +423,43 @@ Citizen.CreateThread(function()
         Citizen.Wait(1)
         _menuPool:ProcessMenus(callCount)
         if IsControlJustReleased(1, 48) then -- 48 is Z
+            if skinJustUpdated then
+                skinJustUpdated = false
+                setUpMenus()
+            end
             mainMenu:Visible(not mainMenu:Visible())
             if clothesMenu:Visible() then
                 clothesMenu:Visible(false)
             end
+            if skinMenu:Visible() then
+                skinMenu:Visible(false)
+            end
         end
         if IsControlJustReleased(1, 19) then -- 19 is LEFT ALT
+            if skinJustUpdated then
+                skinJustUpdated = false
+                setUpMenus()
+            end
             clothesMenu:Visible(not clothesMenu:Visible())
             if mainMenu:Visible() then
                 mainMenu:Visible(false)
+            end
+            if skinMenu:Visible() then
+                skinMenu:Visible(false)
+            end
+        end
+        if IsControlJustReleased(1, 288) then -- 288 is F1
+            print("debug: F1 pressed:"..tostring(skinMenu:Visible()))
+            skinMenu:Visible(not skinMenu:Visible())
+            if clothesMenu:Visible() then
+                clothesMenu:Visible(false)
+            end
+            if mainMenu:Visible() then
+                mainMenu:Visible(false)
+            end
+            if not skinMenu:Visible() and skinJustUpdated then
+                skinJustUpdated = false
+                setUpMenus()
             end
         end
     end

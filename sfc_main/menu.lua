@@ -92,6 +92,18 @@ function getComponentArray(num)
     return retValue
 end
 
+function skinMenuFunc(menu)
+    local skinList = NativeUI.CreateSliderItem("Skins", skins, 1, true)
+    menu:AddItem(skinList)
+    menu.OnSliderChange = function(sender, item, index)
+        if item == skinList then
+            local selectedSkin = item:IndexToItem(index)
+            print("Debug: "..tostring(index))
+            setSkin(selectedSkin)
+        end
+    end
+end
+
 function clothesMenuFunc(menu)
     ped = GetPlayerPed(-1)
     local component0 = getComponentArray(GetNumberOfPedDrawableVariations(ped, 0))
@@ -194,13 +206,16 @@ function setUpMenus()
     _menuPool = NativeUI.CreatePool()
     mainMenu = NativeUI.CreateMenu("Actions", "~b~Action Menu")
     clothesMenu = NativeUI.CreateMenu("Clothes", "~b~Clothes Menu")
-
+    skinMenu = NativeUI.CreateMenu("Skins", "~b~Skin Menu")
 
     _menuPool:Add(mainMenu)
     _menuPool:Add(clothesMenu)
+    _menuPool:Add(skinMenu)
 
     itemMenu(mainMenu)
     clothesMenuFunc(clothesMenu)
+    print("debug: about to call skinMenu")
+    skinMenuFunc(skinMenu)
     _menuPool:RefreshIndex()
     mainMenu.Settings.MouseControlsEnabled = false
     mainMenu.Settings.MouseEdgeEnabled = false
@@ -208,6 +223,9 @@ function setUpMenus()
     clothesMenu.Settings.MouseControlsEnabled = false
     clothesMenu.Settings.MouseEdgeEnabled = false
     clothesMenu.Settings.ControlDisablingEnabled = false
+    skinMenu.Settings.MouseControlsEnabled = false
+    skinMenu.Settings.MouseEdgeEnabled = false
+    skinMenu.Settings.ControlDisablingEnabled = false
 end
 
 setUpMenus()
@@ -258,7 +276,18 @@ RegisterCommand("skinPreview", function(source, args)
     end)
 end)
 
+Citizen.CreateThread(function()
+    while true do
+        Wait(1)
+        if skinMenu:Visible() then
+            SetGameplayCamRelativeHeading(180.0)
+            Draw3DText(GetEntityCoords(GetPlayerPed(-1), false), skins[currentSkinIndex] )
+        end
+    end
+end)
+
 lastModel = 0
+skinJustUpdated = false
 
 function setSkin(skin)
     Citizen.CreateThread(function()
@@ -273,7 +302,8 @@ function setSkin(skin)
             Citizen.Wait(0)
         end
         SetPlayerModel(PlayerId(), model)
-        setUpMenus()
+        --setUpMenus()
         SetPedComponentVariation(GetPlayerPed(-1), 0, 0, 0, 0)
+        skinJustUpdated = true
     end)
 end
