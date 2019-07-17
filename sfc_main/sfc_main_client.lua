@@ -435,7 +435,7 @@ Citizen.CreateThread(function()
                 skinMenu:Visible(false)
             end
         end
-        if IsControlJustReleased(1, 19) then -- 19 is LEFT ALT
+        if IsControlJustReleased(1, 289) then -- 289 is F2
             if skinJustUpdated then
                 skinJustUpdated = false
                 setUpMenus()

@@ -252,7 +252,9 @@ setUpMenus()
 
 _progressBarPool = NativeUI.ProgressBarPool()
 HackingProgressBar = NativeUI.CreateProgressBarItem("Hacking console...")
+--ThermProgressBar = NativeUI.CreateProgressBarItem("Using Thermite")
 _progressBarPool:Add(HackingProgressBar)
+--_progressBarPool:Add(ThermProgressBar)
 
 function changeSkinMenu()
     _menuPool:Remove(clothesMenu)

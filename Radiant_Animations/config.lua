@@ -95,6 +95,8 @@ Config.Anims = {
     {name = 'walk42', data = {type = 'walkstyle', ad = "MOVE_F@POSH@", anim = "", prop = 0, proptwo = 0, boneone = nil, bonetwo = nil, body = 33, x = 0.0, y = 0.0, z = 0.0, xa = 0.0, yb = 0.0, zc = 0.0}},
     {name = 'walk43', data = {type = 'walkstyle', ad = "MOVE_M@TOUGH_GUY@", anim = "", prop = 0, proptwo = 0, boneone = nil, bonetwo = nil, body = 33, x = 0.0, y = 0.0, z = 0.0, xa = 0.0, yb = 0.0, zc = 0.0}},
     {name = 'walk44', data = {type = 'walkstyle', ad = "MOVE_F@TOUGH_GUY@", anim = "", prop = 0, proptwo = 0, boneone = nil, bonetwo = nil, body = 33, x = 0.0, y = 0.0, z = 0.0, xa = 0.0, yb = 0.0, zc = 0.0}},
+    {name = 'therm1', data = {type = 'anim', ad = "anim@heists@ornate_bank@thermal_charge", anim = "thermal_charge", prop = 0, proptwo = 0, boneone = nil, bonetwo = nil, body = 49, x = 0.0, y = 0.0, z = 0.0, xa = 0.0, yb = 0.0, zc = 0.0}},
+    {name = 'therm2', data = {type = 'anim', ad = "anim@heists@ornate_bank@thermal_charge", anim = "bomb_thermal_charge", prop = 0, proptwo = 0, boneone = nil, bonetwo = nil, body = 49, x = 0.0, y = 0.0, z = 0.0, xa = 0.0, yb = 0.0, zc = 0.0}},
 }
 
 --If you want to add more animations:

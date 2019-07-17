@@ -2,9 +2,15 @@ print("loaded bank.lua")
 
 RegisterNetEvent('BankDoor:OpenClient')
 AddEventHandler('BankDoor:OpenClient', function(bankID, doorID, lockedStatus)
-    print("Door opened: "..doorID)
-    print("bankID"..bankID.."doorID"..doorID)
-    changeDoorHeading(bankID, doorID, "open")
+    --print("Door opened: "..doorID)
+    --print("bankID"..bankID.."doorID"..doorID)
+    if banksObject[bankID].doors[doorID].type == "vault" then
+        print("Vault open")
+        changeDoorHeading(bankID, doorID, "open")
+    else
+        changeGateStatus(bankID, doorID, "open")
+        --changeDoorHeading(bankID, doorID, "open")
+    end
     updateLockedStatus(bankID, doorID, lockedStatus)
 end)
 
@@ -12,7 +18,12 @@ RegisterNetEvent('BankDoor:CloseClient')
 AddEventHandler('BankDoor:CloseClient', function(bankID, doorID, lockedStatus)
     --print("Door closed: "..doorID)
     --print("bankID"..bankID.."doorID"..doorID)
-    changeDoorHeading(bankID, doorID, "close")
+    if banksObject[bankID].doors[doorID].type == "vault" then
+        changeDoorHeading(bankID, doorID, "closed")
+    else
+        changeGateStatus(bankID, doorID, "closed")
+        changeDoorHeading(bankID, doorID, "closed")
+    end
     updateLockedStatus(bankID, doorID, lockedStatus)
 end)
 
@@ -73,6 +84,42 @@ function hackConsole(bankID, doorID)
     end)
 end
 
+function thermLock(bankID, doorID)
+    --TriggerEvent("Radiant_Animations:Hack")
+    local progress = 0
+    local commandFlare = "flare "..tostring(bankID).." "..tostring(doorID)
+    local commandEmoteStart = "e therm1"
+    local commandEmoteStop = "e stop"
+    local emoteRunning = true
+    local flareStarted = false
+    print("Thermite command ran")
+    ExecuteCommand(commandEmoteStart)
+    local startThermalTime = GetGameTimer()
+    local timeThermalHasBeenRunning = 0
+    Citizen.CreateThread(function()
+        local thermIsRunning = true
+        while thermIsRunning do
+            Citizen.Wait(1)
+            timeThermalHasBeenRunning = GetGameTimer() - startThermalTime
+            if timeThermalHasBeenRunning >= 5000 and not flareStarted then
+                ExecuteCommand(commandFlare)
+                flareStarted = true
+            end
+            if timeThermalHasBeenRunning >= 8000 and emoteRunning then
+                ExecuteCommand(commandEmoteStop)
+                emoteRunning = false
+            end
+
+            if (timeThermalHasBeenRunning >= 50000) then
+                thermIsRunning = false
+                TriggerServerEvent("BankDoor:OpenServer", bankID, doorID)
+                print("Thermite finished")
+                thermStarted = false
+            end
+        end
+    end)
+end
+
 function checkAllBankDoors()
     for bankID = 1, #banksObject do
         local bank = banksObject[bankID]
@@ -112,6 +159,19 @@ function detectConsole()
     return false, vector3(0,0,0), 0, 0
 end
 
+function detectLock()
+    for bankID = 1, #banksObject do
+        local bank = banksObject[bankID]
+        for lockID = 1, #bank.locks do
+            --print("bankID:"..bankID.." consoleID:"..consoleID.."#banksObject"..#banksObject)
+            if Vdist2(bank.locks[lockID].pos, GetEntityCoords(GetPlayerPed(-1))) < 4 then
+                return true, bank.locks[lockID].pos, bankID, lockID
+            end
+        end
+    end
+    return false, vector3(0,0,0), 0, 0
+end
+
 function closeBankDoor(bankID, doorID)
     TriggerServerEvent("BankDoor:CloseServer", bankID, doorID)
 end
@@ -140,6 +200,26 @@ function hackListener(bankID, doorID, consolePos)
     end)
 end
 
+function thermListener(bankID, doorID, lockPos)
+    print("thermListener started")
+    local waitingForKeyPress = true
+    
+    CreateThread(function()
+        while waitingForKeyPress and thermListenerStarted do
+            -- draw every frame
+            Draw3DText(lockPos, "Press ~r~G ~w~to thermite")
+            Wait(1)
+            if IsControlJustReleased(1, 47) then
+                thermListenerStarted = false
+                waitingForKeyPress = false
+                thermLock(bankID, doorID)
+                thermStarted = true
+            end
+        end
+        print("thermListener ended")
+    end)
+end
+
 function changeDoorHeading(bankID, doorID, action)
     local doorCoords = banksObject[bankID].doors[doorID].pos
     local newHeading
@@ -155,11 +235,27 @@ function changeDoorHeading(bankID, doorID, action)
     --print("bankID"..bankID.."doorID"..doorID.."action"..action.."newHeading"..newHeading)
 end
 
+function changeGateStatus(bankID, doorID, action)
+    local doorCoords = banksObject[bankID].doors[doorID].pos
+    bankDoorID = closestObjectIDtoCoords(doorCoords)
+    SetEntityCanBeDamaged(bankDoorID, false)
+    NetworkRequestControlOfEntity(bankDoorID)
+    if action == "open" then
+        FreezeEntityPosition(bankDoorID, false)
+    else
+        FreezeEntityPosition(bankDoorID, true)
+    end
+    
+    --SetEntityHeading(bankDoorID, tonumber(newHeading))
+    --print("bankID"..bankID.."doorID"..doorID.."action"..action.."newHeading"..newHeading)
+end
+
 function tpBank(bankID)
     SetPedCoordsKeepVehicle(GetPlayerPed(-1), banks[bankID].x, banks[bankID].y, banks[bankID].z)
 end
 
 hackStarted = false
+thermStarted = false
 
 -- Hacking thread
 CreateThread(function()
@@ -167,7 +263,7 @@ CreateThread(function()
     while true do
         Wait(1)
         local consoleDetected, consolePos, bankID, doorID = detectConsole()
-        if consoleDetected then
+        if consoleDetected and banksObject[bankID].doors[doorID].locked then
             if not hackListenerStarted and not hackStarted then
                 --Draw3DText(consolePos, "Press E to hack")
                 hackListener(bankID, doorID, consolePos)
@@ -175,6 +271,24 @@ CreateThread(function()
             end
         else
             hackListenerStarted = false
+        end
+    end
+end)
+
+-- therm thread
+CreateThread(function()
+    print("therm thread")
+    while true do
+        Wait(1)
+        local lockDetected, lockPos, bankID, doorID = detectLock()
+        if lockDetected and banksObject[bankID].doors[doorID].locked and banksObject[bankID].doors[doorID].type == "gate" then
+            if not thermListenerStarted and not thermStarted then
+                --Draw3DText(consolePos, "Press E to thermite")
+                thermListener(bankID, doorID, lockPos)
+                thermListenerStarted = true
+            end
+        else
+            thermListenerStarted = false
         end
     end
 end)

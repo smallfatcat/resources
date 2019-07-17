@@ -16,6 +16,39 @@ RegisterCommand("getProps", function(source, args)
     getAvailableProps()
 end)
 
+RegisterCommand("flare2", function(source, args)
+    --local coords = GetEntityCoords(GetPlayerPed(-1))
+    bankID = tonumber(args[1])
+    doorID = tonumber(args[2])
+    local coords = banksObject[bankID].doors[doorID].pos
+    local offset = {}
+    offset[1] = vector3(-0.4, -1.15, -0.1)
+    offset[2] = vector3(-0.4, -1.15, -0.1)
+    offset[3] = vector3( 1.15, -0.4, -0.1)
+    local lockCoords = vector3(coords.x + offset[doorID].x, coords.y + offset[doorID].y, coords.z + offset[doorID].z)
+    local explosionType = 22
+    local damageScale = 1.0
+    local isAudible = true 
+    local isInvisible = false
+    local cameraShake = 1.0
+    AddExplosion(lockCoords.x, lockCoords.y, lockCoords.z, explosionType, damageScale, isAudible, isInvisible, cameraShake)
+    print("flare2 lockCoords x: "..lockCoords.x.." y: "..lockCoords.y.." z: "..lockCoords.z)
+end)
+
+RegisterCommand("flare", function(source, args)
+    --local coords = GetEntityCoords(GetPlayerPed(-1))
+    bankID = tonumber(args[1])
+    doorID = tonumber(args[2])
+    local lockCoords = banksObject[bankID].locks[doorID].pos
+    local explosionType = 22
+    local damageScale = 1.0
+    local isAudible = true 
+    local isInvisible = false
+    local cameraShake = 1.0
+    AddExplosion(lockCoords.x, lockCoords.y, lockCoords.z, explosionType, damageScale, isAudible, isInvisible, cameraShake)
+    print("lockCoords x: "..lockCoords.x.." y: "..lockCoords.y.." z: "..lockCoords.z)
+end)
+
 function setProp(componentId, drawableId)
     ped = GetPlayerPed(-1)
     textureId = 0
