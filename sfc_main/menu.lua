@@ -93,20 +93,38 @@ function getComponentArray(num)
 end
 
 function skinMenuFunc(menu)
-    local skinList = NativeUI.CreateSliderItem("Skins", skins, 1, true)
+    local skinList = NativeUI.CreateSliderItem("Skins", skins, skinIndexChangedto, true)
     menu:AddItem(skinList)
     menu.OnSliderChange = function(sender, item, index)
         if item == skinList then
             local selectedSkin = item:IndexToItem(index)
             print("Debug: "..tostring(index))
+            skinIndexChangedto = index
             setSkin(selectedSkin)
         end
     end
 end
 
 function clothesMenuFunc(menu)
+    componentText = {"Head","Mask","Hair","Arms","Legs","Bags & Parachutes","Shoes","Neck","Undershirt","Armour","Decals","Shirt"}
     ped = GetPlayerPed(-1)
-    local component0 = getComponentArray(GetNumberOfPedDrawableVariations(ped, 0))
+    
+    componentArray = {}
+    compArray = {}
+    for j = 0, 11 do
+        local numVars = GetNumberOfPedDrawableVariations(ped, j)
+        print("componentID: "..j.." vars: "..numVars)
+        table.insert(componentArray, getComponentArray(numVars) )
+        table.insert(compArray, NativeUI.CreateSliderItem(componentText[j+1], componentArray[j+1], 1, false) )
+        if numVars > 1 then
+            menu:AddItem(compArray[j+1])
+        end
+    end
+    
+    --[[ local component0 = getComponentArray(GetNumberOfPedDrawableVariations(ped, 0))
+    local comp0 = NativeUI.CreateSliderItem("Head", component0, 1, false)
+    menu:AddItem(comp0)
+    
     local component1 = getComponentArray(GetNumberOfPedDrawableVariations(ped, 1))
     local component2 = getComponentArray(GetNumberOfPedDrawableVariations(ped, 2))
     local component3 = getComponentArray(GetNumberOfPedDrawableVariations(ped, 3))
@@ -118,7 +136,7 @@ function clothesMenuFunc(menu)
     local component9 = getComponentArray(GetNumberOfPedDrawableVariations(ped, 9))
     local component10 = getComponentArray(GetNumberOfPedDrawableVariations(ped, 10))
     local component11 = getComponentArray(GetNumberOfPedDrawableVariations(ped, 11))
-    local comp0 = NativeUI.CreateSliderItem("Head", component0, 1, false)
+    
     local comp1 = NativeUI.CreateSliderItem("Mask", component1, 1, false)
     local comp2 = NativeUI.CreateSliderItem("Hair", component2, 1, false)
     local comp3 = NativeUI.CreateSliderItem("Arms", component3, 1, false)
@@ -131,7 +149,7 @@ function clothesMenuFunc(menu)
     local comp10 = NativeUI.CreateSliderItem("Decals", component10, 1, false)
     local comp11 = NativeUI.CreateSliderItem("Shirt", component11, 1, false)
     
-    menu:AddItem(comp0)
+    
     menu:AddItem(comp1)
     menu:AddItem(comp2)
     menu:AddItem(comp3)
@@ -142,61 +160,63 @@ function clothesMenuFunc(menu)
     menu:AddItem(comp8) 
     menu:AddItem(comp9)
     menu:AddItem(comp10)
-    menu:AddItem(comp11)
+    menu:AddItem(comp11)--]]
 
     local ped = GetPlayerPed(-1)
     local textureId = 0
     local paletteId = 0
     
     menu.OnSliderChange = function(sender, item, index)
-        if item == comp0 then
-            local selectedComponent = item:IndexToItem(index)
-            SetPedComponentVariation(ped, 0, selectedComponent, textureId, paletteId)
+        for k = 1, 12 do
+            if item == compArray[k] then
+                local selectedComponent = item:IndexToItem(index)
+                SetPedComponentVariation(ped, k-1, selectedComponent, textureId, paletteId)
+            end
         end
-        if item == comp1 then
+        --[[if item == compArray[2] then
             local selectedComponent = item:IndexToItem(index)
             SetPedComponentVariation(ped, 1, selectedComponent, textureId, paletteId)
         end
-        if item == comp2 then
+        if item == compArray[3] then
             local selectedComponent = item:IndexToItem(index)
             SetPedComponentVariation(ped, 2, selectedComponent, textureId, paletteId)
         end
-        if item == comp3 then
+        if item == compArray[4] then
             local selectedComponent = item:IndexToItem(index)
             SetPedComponentVariation(ped, 3, selectedComponent, textureId, paletteId)
         end
-        if item == comp4 then
+        if item == compArray[5] then
             local selectedComponent = item:IndexToItem(index)
             SetPedComponentVariation(ped, 4, selectedComponent, textureId, paletteId)
         end
-        if item == comp5 then
+        if item == compArray[6] then
             local selectedComponent = item:IndexToItem(index)
             SetPedComponentVariation(ped, 5, selectedComponent, textureId, paletteId)
         end
-        if item == comp6 then
+        if item == compArray[7] then
             local selectedComponent = item:IndexToItem(index)
             SetPedComponentVariation(ped, 6, selectedComponent, textureId, paletteId)
         end
-        if item == comp7 then
+        if item == compArray[8] then
             local selectedComponent = item:IndexToItem(index)
             SetPedComponentVariation(ped, 7, selectedComponent, textureId, paletteId)
         end
-        if item == comp8 then
+        if item == compArray[9] then
             local selectedComponent = item:IndexToItem(index)
             SetPedComponentVariation(ped, 8, selectedComponent, textureId, paletteId)
         end
-        if item == comp9 then
+        if item == compArray[10] then
             local selectedComponent = item:IndexToItem(index)
             SetPedComponentVariation(ped, 9, selectedComponent, textureId, paletteId)
         end
-        if item == comp10 then
+        if item == compArray[11] then
             local selectedComponent = item:IndexToItem(index)
             SetPedComponentVariation(ped, 10, selectedComponent, textureId, paletteId)
         end
-        if item == comp11 then
+        if item == compArray[12] then
             local selectedComponent = item:IndexToItem(index)
             SetPedComponentVariation(ped, 11, selectedComponent, textureId, paletteId)
-        end
+        end--]]
     end
 end
 
@@ -227,7 +247,7 @@ function setUpMenus()
     skinMenu.Settings.MouseEdgeEnabled = false
     skinMenu.Settings.ControlDisablingEnabled = false
 end
-
+skinIndexChangedto = 1
 setUpMenus()
 
 _progressBarPool = NativeUI.ProgressBarPool()
