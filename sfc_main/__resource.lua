@@ -49,6 +49,7 @@ client_scripts {
 
 client_scripts {
     "sfc_config.lua",
+    "skins.lua",
     "test_functions.lua",
     "bank.lua",
     "menu.lua",

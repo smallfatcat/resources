@@ -93,30 +93,31 @@ function getComponentArray(num)
 end
 
 function clothesMenuFunc(menu)
-    local component0 = getComponentArray(46)
-    local component1 = getComponentArray(148)
-    local component2 = getComponentArray(74)
-    local component3 = getComponentArray(168)
-    local component4 = getComponentArray(115)
-    local component5 = getComponentArray(81)
-    local component6 = getComponentArray(91)
-    local component7 = getComponentArray(132)
-    local component8 = getComponentArray(144)
-    local component9 = getComponentArray(38)
-    local component10 = getComponentArray(62)
-    local component11 = getComponentArray(290)
-    local comp0 = NativeUI.CreateListItem("Head", component0, 1)
-    local comp1 = NativeUI.CreateListItem("Mask", component1, 1)
-    local comp2 = NativeUI.CreateListItem("Hair", component2, 1)
-    local comp3 = NativeUI.CreateListItem("Arms", component3, 1)
-    local comp4 = NativeUI.CreateListItem("Legs", component4, 1)
-    local comp5 = NativeUI.CreateListItem("Bags & Parachutes", component5, 1)
-    local comp6 = NativeUI.CreateListItem("Shoes", component6, 1)
-    local comp7 = NativeUI.CreateListItem("comp7", component7, 1)
-    local comp8 = NativeUI.CreateListItem("Undershirt", component8, 1)
-    local comp9 = NativeUI.CreateListItem("Armour", component9, 1)
-    local comp10 = NativeUI.CreateListItem("Decals", component10, 1)
-    local comp11 = NativeUI.CreateListItem("Shirt", component11, 1)
+    ped = GetPlayerPed(-1)
+    local component0 = getComponentArray(GetNumberOfPedDrawableVariations(ped, 0))
+    local component1 = getComponentArray(GetNumberOfPedDrawableVariations(ped, 1))
+    local component2 = getComponentArray(GetNumberOfPedDrawableVariations(ped, 2))
+    local component3 = getComponentArray(GetNumberOfPedDrawableVariations(ped, 3))
+    local component4 = getComponentArray(GetNumberOfPedDrawableVariations(ped, 4))
+    local component5 = getComponentArray(GetNumberOfPedDrawableVariations(ped, 5))
+    local component6 = getComponentArray(GetNumberOfPedDrawableVariations(ped, 6))
+    local component7 = getComponentArray(GetNumberOfPedDrawableVariations(ped, 7))
+    local component8 = getComponentArray(GetNumberOfPedDrawableVariations(ped, 8))
+    local component9 = getComponentArray(GetNumberOfPedDrawableVariations(ped, 9))
+    local component10 = getComponentArray(GetNumberOfPedDrawableVariations(ped, 10))
+    local component11 = getComponentArray(GetNumberOfPedDrawableVariations(ped, 11))
+    local comp0 = NativeUI.CreateSliderItem("Head", component0, 1, false)
+    local comp1 = NativeUI.CreateSliderItem("Mask", component1, 1, false)
+    local comp2 = NativeUI.CreateSliderItem("Hair", component2, 1, false)
+    local comp3 = NativeUI.CreateSliderItem("Arms", component3, 1, false)
+    local comp4 = NativeUI.CreateSliderItem("Legs", component4, 1, false)
+    local comp5 = NativeUI.CreateSliderItem("Bags & Parachutes", component5, 1, false)
+    local comp6 = NativeUI.CreateSliderItem("Shoes", component6, 1, false)
+    local comp7 = NativeUI.CreateSliderItem("Neck", component7, 1, false)
+    local comp8 = NativeUI.CreateSliderItem("Undershirt", component8, 1, false)
+    local comp9 = NativeUI.CreateSliderItem("Armour", component9, 1, false)
+    local comp10 = NativeUI.CreateSliderItem("Decals", component10, 1, false)
+    local comp11 = NativeUI.CreateSliderItem("Shirt", component11, 1, false)
     
     menu:AddItem(comp0)
     menu:AddItem(comp1)
@@ -126,7 +127,7 @@ function clothesMenuFunc(menu)
     menu:AddItem(comp5)
     menu:AddItem(comp6)
     menu:AddItem(comp7)
-    menu:AddItem(comp8)
+    menu:AddItem(comp8) 
     menu:AddItem(comp9)
     menu:AddItem(comp10)
     menu:AddItem(comp11)
@@ -135,7 +136,7 @@ function clothesMenuFunc(menu)
     local textureId = 0
     local paletteId = 0
     
-    menu.OnListSelect = function(sender, item, index)
+    menu.OnSliderChange = function(sender, item, index)
         if item == comp0 then
             local selectedComponent = item:IndexToItem(index)
             SetPedComponentVariation(ped, 0, selectedComponent, textureId, paletteId)
@@ -187,26 +188,92 @@ function clothesMenuFunc(menu)
     end
 end
 
+-- TODO:only in here for testing
+--setSkin("mp_m_freemode_01")
+function setUpMenus()
+    _menuPool = NativeUI.CreatePool()
+    mainMenu = NativeUI.CreateMenu("Actions", "~b~Action Menu")
+    clothesMenu = NativeUI.CreateMenu("Clothes", "~b~Clothes Menu")
 
 
-_menuPool = NativeUI.CreatePool()
-mainMenu = NativeUI.CreateMenu("Actions", "~b~Action Menu")
-clothesMenu = NativeUI.CreateMenu("Clothes", "~b~Clothes Menu")
+    _menuPool:Add(mainMenu)
+    _menuPool:Add(clothesMenu)
 
+    itemMenu(mainMenu)
+    clothesMenuFunc(clothesMenu)
+    _menuPool:RefreshIndex()
+    mainMenu.Settings.MouseControlsEnabled = false
+    mainMenu.Settings.MouseEdgeEnabled = false
+    mainMenu.Settings.ControlDisablingEnabled = false
+    clothesMenu.Settings.MouseControlsEnabled = false
+    clothesMenu.Settings.MouseEdgeEnabled = false
+    clothesMenu.Settings.ControlDisablingEnabled = false
+end
 
-_menuPool:Add(mainMenu)
-_menuPool:Add(clothesMenu)
-
-itemMenu(mainMenu)
-clothesMenuFunc(clothesMenu)
-_menuPool:RefreshIndex()
-mainMenu.Settings.MouseControlsEnabled = false
-mainMenu.Settings.MouseEdgeEnabled = false
-mainMenu.Settings.ControlDisablingEnabled = false
-clothesMenu.Settings.MouseControlsEnabled = false
-clothesMenu.Settings.MouseEdgeEnabled = false
-clothesMenu.Settings.ControlDisablingEnabled = false
+setUpMenus()
 
 _progressBarPool = NativeUI.ProgressBarPool()
 HackingProgressBar = NativeUI.CreateProgressBarItem("Hacking console...")
 _progressBarPool:Add(HackingProgressBar)
+
+function changeSkinMenu()
+    _menuPool:Remove(clothesMenu)
+    clothesMenu = NativeUI.CreateMenu("Clothes", "~b~Clothes Menu")
+    _menuPool:Add(clothesMenu)
+    clothesMenuFunc(clothesMenu)
+    _menuPool:RefreshIndex()
+    clothesMenu.Settings.MouseControlsEnabled = false
+    clothesMenu.Settings.MouseEdgeEnabled = false
+    clothesMenu.Settings.ControlDisablingEnabled = false
+end
+
+RegisterCommand("setSkin", function(source, args)
+    setSkin( skins[ tonumber(args[1]) ] )
+    print( skins[ tonumber(args[1]) ] )
+end)
+
+RegisterCommand("skinPreview", function(source, args)
+    local currentSkinIndex = 1
+    local DrawTextForSkin = true
+    SetGameplayCamRelativeHeading(180.0)
+    Citizen.CreateThread(function()
+        for i = 183, #skins do
+            currentSkinIndex = i
+            setSkin(skins[i])
+            --setSkin("mp_m_freemode_01")
+            --print(skins[i])
+            Wait(5000)
+            InvalidateIdleCam()
+            N_0x9e4cfff989258472()
+        end
+        DrawTextForSkin = false
+    end)
+
+    Citizen.CreateThread(function()
+        while DrawTextForSkin do
+            SetGameplayCamRelativeHeading(180.0)
+            Draw3DText(GetEntityCoords(GetPlayerPed(-1), false), skins[currentSkinIndex] )
+            Wait(1)
+        end
+    end)
+end)
+
+lastModel = 0
+
+function setSkin(skin)
+    Citizen.CreateThread(function()
+        if lastModel ~= 0 then
+            SetModelAsNoLongerNeeded(lastModel)
+        end
+        local model = GetHashKey(skin)
+        RequestModel(model)
+        lastModel = model
+        while not HasModelLoaded(model) do
+            RequestModel(model)
+            Citizen.Wait(0)
+        end
+        SetPlayerModel(PlayerId(), model)
+        setUpMenus()
+        SetPedComponentVariation(GetPlayerPed(-1), 0, 0, 0, 0)
+    end)
+end

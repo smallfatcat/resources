@@ -16,24 +16,6 @@ RegisterCommand("getProps", function(source, args)
     getAvailableProps()
 end)
 
-RegisterCommand("setSkin", function(source, args)
-    local skin = "mp_m_freemode_01"
-    setSkin(skin)
-end)
-
-function setSkin(skin)
-    Citizen.CreateThread(function()
-        local model = GetHashKey(skin)
-        RequestModel(model)
-        while not HasModelLoaded(model) do
-            RequestModel(model)
-            Citizen.Wait(0)
-        end
-        SetPlayerModel(PlayerId(), model)
-        SetPedComponentVariation(GetPlayerPed(-1), 0, 0, 0, 2)
-    end)
-end
-
 function setProp(componentId, drawableId)
     ped = GetPlayerPed(-1)
     textureId = 0
