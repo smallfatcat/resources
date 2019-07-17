@@ -6,7 +6,7 @@ function getTPPnames()
     return names
 end
 
-function itemMenu(menu)
+function actionMenuFunc(menu)
     local b = {1,2,3,4}
     local emoteList = {}
     for i = 1, #Config.Anims do
@@ -224,22 +224,22 @@ end
 --setSkin("mp_m_freemode_01")
 function setUpMenus()
     _menuPool = NativeUI.CreatePool()
-    mainMenu = NativeUI.CreateMenu("Actions", "~b~Action Menu")
+    actionMenu = NativeUI.CreateMenu("Actions", "~b~Action Menu")
     clothesMenu = NativeUI.CreateMenu("Clothes", "~b~Clothes Menu")
     skinMenu = NativeUI.CreateMenu("Skins", "~b~Skin Menu")
 
-    _menuPool:Add(mainMenu)
+    _menuPool:Add(actionMenu)
     _menuPool:Add(clothesMenu)
     _menuPool:Add(skinMenu)
 
-    itemMenu(mainMenu)
+    actionMenuFunc(actionMenu)
     clothesMenuFunc(clothesMenu)
     print("debug: about to call skinMenu")
     skinMenuFunc(skinMenu)
     _menuPool:RefreshIndex()
-    mainMenu.Settings.MouseControlsEnabled = false
-    mainMenu.Settings.MouseEdgeEnabled = false
-    mainMenu.Settings.ControlDisablingEnabled = false
+    actionMenu.Settings.MouseControlsEnabled = false
+    actionMenu.Settings.MouseEdgeEnabled = false
+    actionMenu.Settings.ControlDisablingEnabled = false
     clothesMenu.Settings.MouseControlsEnabled = false
     clothesMenu.Settings.MouseEdgeEnabled = false
     clothesMenu.Settings.ControlDisablingEnabled = false

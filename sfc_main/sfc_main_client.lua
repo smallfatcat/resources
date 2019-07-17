@@ -427,7 +427,7 @@ Citizen.CreateThread(function()
                 skinJustUpdated = false
                 setUpMenus()
             end
-            mainMenu:Visible(not mainMenu:Visible())
+            actionMenu:Visible(not actionMenu:Visible())
             if clothesMenu:Visible() then
                 clothesMenu:Visible(false)
             end
@@ -441,8 +441,8 @@ Citizen.CreateThread(function()
                 setUpMenus()
             end
             clothesMenu:Visible(not clothesMenu:Visible())
-            if mainMenu:Visible() then
-                mainMenu:Visible(false)
+            if actionMenu:Visible() then
+                actionMenu:Visible(false)
             end
             if skinMenu:Visible() then
                 skinMenu:Visible(false)
@@ -454,8 +454,8 @@ Citizen.CreateThread(function()
             if clothesMenu:Visible() then
                 clothesMenu:Visible(false)
             end
-            if mainMenu:Visible() then
-                mainMenu:Visible(false)
+            if actionMenu:Visible() then
+                actionMenu:Visible(false)
             end
             if not skinMenu:Visible() and skinJustUpdated then
                 skinJustUpdated = false

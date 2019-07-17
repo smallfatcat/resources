@@ -27,10 +27,6 @@ AddEventHandler('BankDoor:CloseClient', function(bankID, doorID, lockedStatus)
     updateLockedStatus(bankID, doorID, lockedStatus)
 end)
 
-RegisterCommand("hack", function(source, args)
-    
-end)
-
 RegisterCommand("blowtorch", function(source, args)
     playerPed = GetPlayerPed(-1)
     TaskStartScenarioInPlace(playerPed, 'WORLD_HUMAN_WELDING', 0, true)
