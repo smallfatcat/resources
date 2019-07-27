@@ -4,12 +4,20 @@
 		"selected_items":
 		[
 			[
-				"hack",
-				"hackConsole"
+				"door",
+				"doorID"
 			],
 			[
 				"bank",
-				"banksObject"
+				"bankID"
+			],
+			[
+				"doo",
+				"doorID"
+			],
+			[
+				"hack",
+				"hackConsole"
 			],
 			[
 				"clos",
@@ -56,19 +64,19 @@
 	"buffers":
 	[
 		{
-			"file": "/K/Downloads/handling.meta",
-			"settings":
-			{
-				"buffer_size": 1605520,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "sfc_main_client.lua",
 			"settings":
 			{
-				"buffer_size": 24446,
+				"buffer_size": 20527,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "menu.lua",
+			"settings":
+			{
+				"buffer_size": 12476,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -77,34 +85,7 @@
 			"file": "bank.lua",
 			"settings":
 			{
-				"buffer_size": 4665,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "test_functions.lua",
-			"settings":
-			{
-				"buffer_size": 596,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "data.lua",
-			"settings":
-			{
-				"buffer_size": 6285,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "__resource.lua",
-			"settings":
-			{
-				"buffer_size": 2075,
+				"buffer_size": 9901,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -113,26 +94,51 @@
 			"file": "sfc_main_server.lua",
 			"settings":
 			{
-				"buffer_size": 354,
+				"buffer_size": 657,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "/K/FXServer/server-data/resources/scratchpad.lua",
+			"file": "test_functions.lua",
 			"settings":
 			{
-				"buffer_size": 891,
+				"buffer_size": 4449,
 				"encoding": "UTF-8",
-				"line_ending": "Windows",
-				"name": "bank"
+				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "/K/FXServer/server-data/resources/TODO.txt",
+			"file": "sfc_config.lua",
 			"settings":
 			{
-				"buffer_size": 250,
+				"buffer_size": 7189,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "sfc_config_server.lua",
+			"settings":
+			{
+				"buffer_size": 2557,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/Users/David/Desktop/GTA Data/animations.txt",
+			"settings":
+			{
+				"buffer_size": 5992559,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "__resource.lua",
+			"settings":
+			{
+				"buffer_size": 2173,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -185,21 +191,29 @@
 		"side_bar_visible": false,
 		"status_bar_visible": false
 	},
-	"expanded_folders":
-	[
-		"/K/FXServer/server-data/resources/speedometer",
-		"/K/FXServer/server-data/resources/sfc_main"
-	],
 	"file_history":
 	[
+		"/K/FXServer/server-data/resources/scratchpad.lua",
+		"/K/FXServer/server-data/resources/TODO.txt",
+		"/C/Users/David/Desktop/GTA Data/GTA V PROP LIST.txt",
+		"/K/FXServer/server-data/resources/sfc_main/skins.lua",
+		"/K/FXServer/server-data/resources/Radiant_Animations/client/client.lua",
+		"/K/FXServer/server-data/resources/Radiant_Animations/config.lua",
+		"/G/AppData/Local/FiveM/FiveM.app/CitizenFX.log",
+		"/C/Users/David/Desktop/GTA Data/skins.txt",
+		"/C/Users/David/Desktop/GTA Data/gta_v_scenarios.txt",
+		"/K/FXServer/server-data/resources/sfc_main/menu.lua",
+		"/K/FXServer/server-data/resources/NativeUILua-Reloaded/UIMenu/UIMenu.lua",
+		"/K/FXServer/server-data/resources/NativeUILua-Reloaded/UIMenu/MenuPool.lua",
+		"/K/FXServer/server-data/resources/sfc_main/data.lua",
+		"/K/Downloads/handling.meta",
+		"/K/FXServer/server-data/resources/guns/functions.lua",
+		"/K/FXServer/server-data/resources/guns/guns-c.lua",
 		"/K/FXServer/server-data/resources/speedometer/main.sublime-project",
 		"/K/FXServer/server-data/resources/pillbox-interior/client.lua",
 		"/K/FXServer/server-data/resources/bob74_ipl/gtav/base.lua",
-		"/K/FXServer/server-data/resources/Radiant_Animations/config.lua",
 		"/C/Users/David/Desktop/AnimList.xml",
-		"/K/FXServer/server-data/resources/Radiant_Animations/client/client.lua",
 		"/K/FXServer/server-data/resources/NativeUILua-Reloaded/NativeUI.lua",
-		"/K/FXServer/server-data/resources/NativeUILua-Reloaded/UIMenu/UIMenu.lua",
 		"/K/FXServer/server-data/resources/NativeUILua-Reloaded/Wrapper/Utility.lua",
 		"/K/FXServer/server-data/resources/speedometer/sfc_main_client.lua",
 		"/K/FXServer/server-data/resources/speedometer/__resource.lua",
@@ -218,7 +232,6 @@
 		"/C/Users/David/AppData/Local/Temp/Rar$DIa0.585/vVoice_s.lua",
 		"/C/Users/David/AppData/Local/Temp/Rar$DIa0.598/vVoice.lua",
 		"/C/Users/David/AppData/Local/Temp/Rar$DIa0.485/__resource.lua",
-		"/K/FXServer/server-data/resources/guns/functions.lua",
 		"/K/FXServer/server-data/resources/mysql-async/example.lua",
 		"/K/FXServer/server-data/resources/[system]/scoreboard/html/scoreboard.html",
 		"/K/FXServer/server-data/resources/mysql-async/lib/MySQL.lua",
@@ -240,7 +253,6 @@
 		"/K/FXServer/server-data/resources/[gameplay]/obituary/obituary.lua",
 		"/K/FXServer/server-data/resources/[gameplay]/playernames/playernames_api.lua",
 		"/K/FXServer/server-data/resources/guns/__resource.lua",
-		"/K/FXServer/server-data/resources/guns/guns-c.lua",
 		"/K/FXServer/server-data/resources/menu/__resource.lua",
 		"/K/FXServer/server-data/resources/NativeUI/NativeUI.lua",
 		"/K/FXServer/server-data/resources/nui/html/reset.css",
@@ -308,19 +320,18 @@
 		"/C/Users/David/Documents/Arduino/libraries/mybutton/mybutton.h",
 		"/C/Program Files (x86)/Arduino/libraries/Stepper/Stepper.h",
 		"/C/Program Files (x86)/Arduino/libraries/Stepper/Stepper.cpp",
-		"/C/Program Files (x86)/Arduino/libraries/NewliquidCrystal/LCD.h",
-		"/C/Program Files (x86)/Arduino/libraries/NewliquidCrystal/LiquidCrystal.h",
-		"/C/Users/David/Desktop/nettestv1/LICENSE"
+		"/C/Program Files (x86)/Arduino/libraries/NewliquidCrystal/LCD.h"
 	],
 	"find":
 	{
-		"height": 40.0
+		"height": 28.0
 	},
 	"find_in_files":
 	{
 		"height": 104.0,
 		"where_history":
 		[
+			"K:\\FXServer\\server-data\\resources",
 			"K:\\FXServer\\server-data\\resources\\NativeUILua-Reloaded",
 			"K:\\FXServer\\server-data\\resources"
 		]
@@ -330,6 +341,31 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"mainMenu",
+			"actionMenu",
+			"itemMenu",
+			"actionMenu",
+			"StopAnimations",
+			"thermListenerStarted",
+			"ThermProgressBar",
+			"hackStarted",
+			"hackListenerStarted",
+			"thermListenerStarted",
+			"press e",
+			"entityc",
+			"coords",
+			"1)",
+			"control",
+			"print",
+			"leftpressed",
+			"JustOpened",
+			"ProcessMenus",
+			"ProcessControl",
+			"174",
+			"newh",
+			"BankDoor:OpenClient",
+			"BankDoor:CloseClient",
+			"pressed",
 			"openDoor",
 			"controlis",
 			"_progressBarPool",
@@ -386,64 +422,39 @@
 		"regex": false,
 		"replace_history":
 		[
+			"actionMenu",
+			"actionMenuFunc",
+			"actionMenu",
+			"1, false)",
 			""
 		],
 		"reverse": false,
 		"show_context": true,
 		"use_buffer2": true,
-		"whole_word": false,
+		"whole_word": true,
 		"wrap": true
 	},
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "/K/Downloads/handling.meta",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1605520,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1525708,
-								1525726
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/XML/XML.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 719007.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 8,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
 					"file": "sfc_main_client.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 24446,
+						"buffer_size": 20527,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6209,
-								6209
+								13129,
+								13129
 							]
 						],
 						"settings":
@@ -453,10 +464,41 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 8949.0,
+						"translation.y": 7943.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "menu.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 12476,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								9128,
+								9136
+							]
+						],
+						"settings":
+						{
+							"history_list_is_closing": true,
+							"syntax": "Packages/Lua/Lua.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 4045.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
@@ -465,15 +507,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4665,
+						"buffer_size": 9901,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2763,
-								2763
+								1395,
+								1395
 							]
 						],
 						"settings":
@@ -483,172 +525,143 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2052.0,
+						"translation.y": 399.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "test_functions.lua",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 596,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								596,
-								596
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Lua/Lua.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "data.lua",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 6285,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								14,
-								14
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Lua/Lua.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "__resource.lua",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2075,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2009,
-								2009
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Lua/Lua.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 342.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
 					"file": "sfc_main_server.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 354,
+						"buffer_size": 657,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								91,
-								105
+								547,
+								547
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Lua/Lua.sublime-syntax"
+							"syntax": "Packages/Lua/Lua.sublime-syntax",
+							"tab_size": 4
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "/K/FXServer/server-data/resources/scratchpad.lua",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 891,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								141,
-								891
-							]
-						],
-						"settings":
-						{
-							"auto_name": "bank",
-							"syntax": "Packages/Lua/Lua.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 285.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 9,
 					"type": "text"
 				},
 				{
-					"buffer": 8,
-					"file": "/K/FXServer/server-data/resources/TODO.txt",
+					"buffer": 4,
+					"file": "test_functions.lua",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 250,
+						"buffer_size": 4449,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								163,
-								163
+								1604,
+								1604
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua/Lua.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 477.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "sfc_config.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7189,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4632,
+								7189
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua/Lua.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 2622.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "sfc_config_server.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2557,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2557,
+								2557
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua/Lua.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "/C/Users/David/Desktop/GTA Data/animations.txt",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5992559,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1112847,
+								1112861
 							]
 						],
 						"settings":
@@ -656,10 +669,40 @@
 							"syntax": "Packages/Text/Plain text.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 324312.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "__resource.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2173,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2012,
+								2012
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua/Lua.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 456.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
@@ -687,7 +730,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 1,
 					"type": "text"
 				}
 			]
@@ -733,10 +776,10 @@
 		"height": 100.0
 	},
 	"pinned_build_system": "",
-	"project": "/K/FXServer/server-data/resources/speedometer/main.sublime-project",
+	"project": "sfc_main.sublime-project",
 	"replace":
 	{
-		"height": 72.0
+		"height": 52.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -773,7 +816,7 @@
 	"show_minimap": true,
 	"show_open_files": true,
 	"show_tabs": true,
-	"side_bar_visible": false,
+	"side_bar_visible": true,
 	"side_bar_width": 150.0,
 	"status_bar_visible": true,
 	"template_settings":
